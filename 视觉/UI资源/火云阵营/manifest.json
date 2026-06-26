@@ -1,0 +1,424 @@
+{
+  "source": "/Users/weijie/Downloads/8c82b50a-68c9-4a70-9fe5-853ef8860605.png",
+  "source_size": {
+    "width": 1448,
+    "height": 1086
+  },
+  "padding": 8,
+  "assets": [
+    {
+      "file": "firecloud_gate.png",
+      "name_zh": "火云城门",
+      "note": "火云主题核心城门/建筑",
+      "source_boxes": [
+        {
+          "x": 432,
+          "y": 412,
+          "width": 549,
+          "height": 424
+        }
+      ],
+      "padded_box": {
+        "x": 424,
+        "y": 404,
+        "width": 565,
+        "height": 440
+      },
+      "size": {
+        "width": 565,
+        "height": 440
+      }
+    },
+    {
+      "file": "bottom_text_panel.png",
+      "name_zh": "底部文本框",
+      "note": "底部大文本框/说明框",
+      "source_boxes": [
+        {
+          "x": 349,
+          "y": 857,
+          "width": 720,
+          "height": 214
+        }
+      ],
+      "padded_box": {
+        "x": 341,
+        "y": 849,
+        "width": 736,
+        "height": 230
+      },
+      "size": {
+        "width": 736,
+        "height": 230
+      }
+    },
+    {
+      "file": "top_banner_three_stars.png",
+      "name_zh": "顶部长横幅_三星",
+      "note": "顶部主横幅，三颗金星连体",
+      "source_boxes": [
+        {
+          "x": 303,
+          "y": 14,
+          "width": 804,
+          "height": 187
+        }
+      ],
+      "padded_box": {
+        "x": 295,
+        "y": 6,
+        "width": 820,
+        "height": 203
+      },
+      "size": {
+        "width": 820,
+        "height": 203
+      }
+    },
+    {
+      "file": "right_side_column.png",
+      "name_zh": "右侧火云立柱",
+      "note": "右侧竖向火云木柱",
+      "source_boxes": [
+        {
+          "x": 1261,
+          "y": 20,
+          "width": 137,
+          "height": 742
+        }
+      ],
+      "padded_box": {
+        "x": 1253,
+        "y": 12,
+        "width": 153,
+        "height": 758
+      },
+      "size": {
+        "width": 153,
+        "height": 758
+      }
+    },
+    {
+      "file": "left_side_column.png",
+      "name_zh": "左侧火云立柱",
+      "note": "左侧竖向火云木柱",
+      "source_boxes": [
+        {
+          "x": 50,
+          "y": 21,
+          "width": 171,
+          "height": 739
+        }
+      ],
+      "padded_box": {
+        "x": 42,
+        "y": 13,
+        "width": 187,
+        "height": 755
+      },
+      "size": {
+        "width": 187,
+        "height": 755
+      }
+    },
+    {
+      "file": "bottom_right_corner_brazier.png",
+      "name_zh": "右下角火盆角花",
+      "note": "右下角火盆与火云角花组合",
+      "source_boxes": [
+        {
+          "x": 1124,
+          "y": 719,
+          "width": 312,
+          "height": 346
+        }
+      ],
+      "padded_box": {
+        "x": 1116,
+        "y": 711,
+        "width": 328,
+        "height": 362
+      },
+      "size": {
+        "width": 328,
+        "height": 362
+      }
+    },
+    {
+      "file": "bottom_left_corner_brazier.png",
+      "name_zh": "左下角火盆角花",
+      "note": "左下角火盆与火云角花组合",
+      "source_boxes": [
+        {
+          "x": 18,
+          "y": 717,
+          "width": 295,
+          "height": 347
+        }
+      ],
+      "padded_box": {
+        "x": 10,
+        "y": 709,
+        "width": 311,
+        "height": 363
+      },
+      "size": {
+        "width": 311,
+        "height": 363
+      }
+    },
+    {
+      "file": "hanging_nameplate.png",
+      "name_zh": "竖向挂挂牌",
+      "note": "竖向空白挂牌",
+      "source_boxes": [
+        {
+          "x": 1106,
+          "y": 102,
+          "width": 129,
+          "height": 451
+        }
+      ],
+      "padded_box": {
+        "x": 1098,
+        "y": 94,
+        "width": 145,
+        "height": 467
+      },
+      "size": {
+        "width": 145,
+        "height": 467
+      }
+    },
+    {
+      "file": "right_banner.png",
+      "name_zh": "右侧火云旗帜",
+      "note": "右侧红色火云旗帜",
+      "source_boxes": [
+        {
+          "x": 1015,
+          "y": 566,
+          "width": 176,
+          "height": 251
+        }
+      ],
+      "padded_box": {
+        "x": 1007,
+        "y": 558,
+        "width": 192,
+        "height": 267
+      },
+      "size": {
+        "width": 192,
+        "height": 267
+      }
+    },
+    {
+      "file": "left_banner.png",
+      "name_zh": "左侧火云旗帜",
+      "note": "左侧红色火云旗帜",
+      "source_boxes": [
+        {
+          "x": 219,
+          "y": 566,
+          "width": 175,
+          "height": 252
+        }
+      ],
+      "padded_box": {
+        "x": 211,
+        "y": 558,
+        "width": 191,
+        "height": 268
+      },
+      "size": {
+        "width": 191,
+        "height": 268
+      }
+    },
+    {
+      "file": "hanging_lantern.png",
+      "name_zh": "金色吊灯",
+      "note": "左上金色吊灯",
+      "source_boxes": [
+        {
+          "x": 229,
+          "y": 195,
+          "width": 118,
+          "height": 353
+        }
+      ],
+      "padded_box": {
+        "x": 221,
+        "y": 187,
+        "width": 134,
+        "height": 369
+      },
+      "size": {
+        "width": 134,
+        "height": 369
+      }
+    },
+    {
+      "file": "gem_wing_ornament.png",
+      "name_zh": "中心宝石翼饰",
+      "note": "中部横向宝石翼饰",
+      "source_boxes": [
+        {
+          "x": 415,
+          "y": 329,
+          "width": 213,
+          "height": 84
+        }
+      ],
+      "padded_box": {
+        "x": 407,
+        "y": 321,
+        "width": 229,
+        "height": 100
+      },
+      "size": {
+        "width": 229,
+        "height": 100
+      }
+    },
+    {
+      "file": "gold_star_right.png",
+      "name_zh": "独立金星_右",
+      "note": "独立五角金星",
+      "source_boxes": [
+        {
+          "x": 726,
+          "y": 211,
+          "width": 96,
+          "height": 95
+        }
+      ],
+      "padded_box": {
+        "x": 718,
+        "y": 203,
+        "width": 112,
+        "height": 111
+      },
+      "size": {
+        "width": 112,
+        "height": 111
+      }
+    },
+    {
+      "file": "gold_star_left.png",
+      "name_zh": "独立金星_左",
+      "note": "独立五角金星",
+      "source_boxes": [
+        {
+          "x": 480,
+          "y": 211,
+          "width": 95,
+          "height": 94
+        }
+      ],
+      "padded_box": {
+        "x": 472,
+        "y": 203,
+        "width": 111,
+        "height": 110
+      },
+      "size": {
+        "width": 111,
+        "height": 110
+      }
+    },
+    {
+      "file": "gold_star_center.png",
+      "name_zh": "独立金星_中",
+      "note": "独立五角金星",
+      "source_boxes": [
+        {
+          "x": 606,
+          "y": 211,
+          "width": 96,
+          "height": 94
+        }
+      ],
+      "padded_box": {
+        "x": 598,
+        "y": 203,
+        "width": 112,
+        "height": 110
+      },
+      "size": {
+        "width": 112,
+        "height": 110
+      }
+    },
+    {
+      "file": "small_gem_wings.png",
+      "name_zh": "小型宝石翼饰",
+      "note": "小型横向宝石翼饰",
+      "source_boxes": [
+        {
+          "x": 669,
+          "y": 351,
+          "width": 88,
+          "height": 47
+        }
+      ],
+      "padded_box": {
+        "x": 661,
+        "y": 343,
+        "width": 104,
+        "height": 63
+      },
+      "size": {
+        "width": 104,
+        "height": 63
+      }
+    },
+    {
+      "file": "small_corner_gem.png",
+      "name_zh": "小型角饰宝石",
+      "note": "小型角饰宝石",
+      "source_boxes": [
+        {
+          "x": 847,
+          "y": 350,
+          "width": 67,
+          "height": 50
+        }
+      ],
+      "padded_box": {
+        "x": 839,
+        "y": 342,
+        "width": 83,
+        "height": 66
+      },
+      "size": {
+        "width": 83,
+        "height": 66
+      }
+    },
+    {
+      "file": "diamond_gem.png",
+      "name_zh": "独立菱形宝石",
+      "note": "独立菱形红宝石",
+      "source_boxes": [
+        {
+          "x": 783,
+          "y": 353,
+          "width": 47,
+          "height": 46
+        }
+      ],
+      "padded_box": {
+        "x": 775,
+        "y": 345,
+        "width": 63,
+        "height": 62
+      },
+      "size": {
+        "width": 63,
+        "height": 62
+      }
+    }
+  ]
+}

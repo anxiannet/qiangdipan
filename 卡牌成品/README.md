@@ -16,20 +16,20 @@
 在仓库根目录运行：
 
 ```bash
-python3 视觉/成品卡牌/生成完整卡牌.py
+python3 卡牌成品/生成完整卡牌.py
 ```
 
 脚本会读取：
 
-- `视觉/成品卡牌/card_data.json`
+- `卡牌成品/card_data.json`
 - `视觉/批量生成/插画资产/`
 
 输出：
 
-- `视觉/成品卡牌/正面/`
-- `视觉/成品卡牌/背面/xiyao_qiangdipan_card_back.png`
-- `视觉/成品卡牌/模板/card_front_template_preview.png`
-- `视觉/成品卡牌/导出/all_cards_contact_sheet.png`
+- `卡牌成品/正面/`
+- `卡牌成品/背面/`
+- `卡牌成品/模板/card_front_template_preview.png`
+- `卡牌成品/导出/all_cards_contact_sheet.png`
 
 ## 规则边界
 

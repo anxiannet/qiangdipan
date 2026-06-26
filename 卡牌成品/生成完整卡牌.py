@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from typing import Iterable
 
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
 
 ROOT = Path(__file__).resolve().parent
@@ -18,6 +18,9 @@ FRONT_DIR = ROOT / "正面"
 BACK_DIR = ROOT / "背面"
 TEMPLATE_DIR = ROOT / "模板"
 EXPORT_DIR = ROOT / "导出"
+PROJECT_ROOT = ROOT.parent
+BAIGU_CLEAN_ASSET_DIR = PROJECT_ROOT / "output" / "assets"
+BAIGU_SOURCE_ASSET_DIR = PROJECT_ROOT / "视觉" / "视觉资产设计" / "白骨阵营"
 
 BLEED_W, BLEED_H = 815, 1110
 TRIM_W, TRIM_H = 744, 1039
@@ -32,6 +35,40 @@ INK = (54, 42, 32)
 GOLD = (190, 150, 76)
 DARK_GOLD = (105, 74, 38)
 CREAM = (255, 248, 224)
+BAIGU_BLEED_BG = (16, 36, 61)
+
+BAIGU_LAYOUT = {
+    "frame_box": (SAFE, SAFE, 673, 969),
+    "art_clip": (118, 150, 579, 830),
+    "star_positions": [(162, 230), (226, 230), (290, 230)],
+    "star_size": (56, 56),
+    "nameplate": (570, 250, 88, 330),
+    "name_safe": (586, 270, 56, 290),
+    "skillbar": (67, 885, 682, 116),
+    "skill_safe": (157, 907, 502, 72),
+}
+
+BAIGU_CLEAN_ASSETS = {
+    "frame_1": "frame_1star_clean.png",
+    "frame_2": "frame_2star_clean.png",
+    "frame_3": "frame_3star_clean.png",
+    "nameplate": "nameplate_vertical_clean.png",
+    "skillbar": "skillbar_common_clean.png",
+    "star_1": "star_1_clean.png",
+    "star_2": "star_2_clean.png",
+    "star_3": "star_3_clean.png",
+}
+
+BAIGU_SOURCE_ASSETS = {
+    "frame_1": "baigu_1star_monster_frame_chromakey_B.png",
+    "frame_2": "baigu_2star_monster_frame_chromakey_C.png",
+    "frame_3": "baigu_3star_monster_frame_chromakey_C.png.png",
+    "nameplate": "baigu_monster_nameplate_vertical_chromakey_B.png",
+    "skillbar": "baigu_skill_textbar_common_chromakey_B.png",
+    "star_1": "baigu_star_1_silver_chromakey_A.png",
+    "star_2": "baigu_star_2_purple_chromakey_B.png",
+    "star_3": "baigu_star_3_gold_chromakey_B.png",
+}
 
 TYPE_COLORS = {
     "minion": {
@@ -236,7 +273,7 @@ def gradient_background(size: tuple[int, int], top: tuple[int, int, int], bottom
 
 
 def load_art(card: dict, art_box: tuple[int, int, int, int]) -> tuple[Image.Image, bool]:
-    art_path = (ROOT / card["art_path"]).resolve()
+    art_path = resolve_art_path(card)
     x1, y1, x2, y2 = art_box
     target_w, target_h = x2 - x1, y2 - y1
     if art_path.exists():
@@ -256,6 +293,199 @@ def load_art(card: dict, art_box: tuple[int, int, int, int]) -> tuple[Image.Imag
     note_font = font(28)
     draw_centered_text(d, "插画待补", (30, target_h // 2, target_w - 30, target_h // 2 + 60), note_font, (115, 82, 48))
     return placeholder, True
+
+
+def xywh_to_box(box: tuple[int, int, int, int]) -> tuple[int, int, int, int]:
+    x, y, w, h = box
+    return x, y, x + w, y + h
+
+
+def cover_crop(img: Image.Image, size: tuple[int, int], focus: tuple[float, float] = (0.5, 0.5)) -> Image.Image:
+    target_w, target_h = size
+    scale = max(target_w / img.width, target_h / img.height)
+    resized = img.resize((round(img.width * scale), round(img.height * scale)), Image.Resampling.LANCZOS)
+    left = max(0, min(int((resized.width - target_w) * focus[0]), resized.width - target_w))
+    top = max(0, min(int((resized.height - target_h) * focus[1]), resized.height - target_h))
+    return resized.crop((left, top, left + target_w, top + target_h))
+
+
+def resolve_art_path(card: dict) -> Path:
+    raw_path = Path(card["art_path"])
+    candidates = [
+        (ROOT / raw_path).resolve(),
+        (PROJECT_ROOT / raw_path).resolve(),
+        PROJECT_ROOT / "视觉" / "批量生成" / "插画资产" / raw_path.name,
+    ]
+    if card["type"] in {"minion", "elite", "leader", "artifact", "land"}:
+        for prefix in ("xiyao_qiangdipan", "xiyao_zhanshanweiwang"):
+            candidates.append(
+                PROJECT_ROOT
+                / "视觉"
+                / "批量生成"
+                / "插画资产"
+                / f"{prefix}_{card['type']}_{card['slug']}.png"
+            )
+    for path in candidates:
+        if path.exists():
+            return path
+    return candidates[0]
+
+
+def chroma_key_green(path: Path) -> Image.Image:
+    src = Image.open(path).convert("RGBA")
+    pixels = src.load()
+    width, height = src.size
+    for y in range(height):
+        for x in range(width):
+            r, g, b, a = pixels[x, y]
+            max_rb = max(r, b)
+            green_excess = g - max_rb
+            green_ratio = g / max(1, max_rb)
+            keyed = g > 90 and green_excess > 24 and green_ratio > 1.18
+            soft = max(0, min(1, (green_excess - 8) / 42)) * max(0, min(1, (g - 70) / 80))
+            if keyed:
+                pixels[x, y] = (r, min(g, round(max_rb * 0.92)), b, 0)
+            elif soft > 0:
+                alpha = round(a * (1 - soft))
+                despill_g = min(g, round(max_rb * 0.94))
+                pixels[x, y] = (r, despill_g, b, 0 if alpha < 12 else alpha)
+            elif g > max_rb and green_excess > 8:
+                pixels[x, y] = (r, min(g, round(max_rb * 0.96)), b, a)
+
+    alpha = src.getchannel("A").filter(ImageFilter.GaussianBlur(0.45))
+    src.putalpha(alpha)
+    bbox = src.getbbox()
+    if not bbox:
+        return src
+    pad = 4
+    left, top, right, bottom = bbox
+    return src.crop((max(0, left - pad), max(0, top - pad), min(src.width, right + pad), min(src.height, bottom + pad)))
+
+
+def load_baigu_asset(key: str) -> Image.Image:
+    clean = BAIGU_CLEAN_ASSET_DIR / BAIGU_CLEAN_ASSETS[key]
+    if clean.exists():
+        return Image.open(clean).convert("RGBA")
+    source = BAIGU_SOURCE_ASSET_DIR / BAIGU_SOURCE_ASSETS[key]
+    if not source.exists():
+        raise FileNotFoundError(f"Missing White Bone UI asset: {clean} or {source}")
+    return chroma_key_green(source)
+
+
+def paste_fit_rgba(base: Image.Image, asset: Image.Image, box: tuple[int, int, int, int]) -> None:
+    x, y, w, h = box
+    resized = asset.resize((w, h), Image.Resampling.LANCZOS)
+    base.alpha_composite(resized, (x, y))
+
+
+def make_baigu_skillbar(box: tuple[int, int, int, int]) -> Image.Image:
+    _, _, width, height = box
+    src = load_baigu_asset("skillbar").resize((width, height), Image.Resampling.LANCZOS)
+    top_band = min(28, height // 3)
+    bottom_band = min(18, height // 4)
+    new_top = max(1, top_band // 2)
+    top = src.crop((0, 0, width, top_band)).resize((width, new_top), Image.Resampling.LANCZOS)
+    middle = src.crop((0, top_band, width, height - bottom_band)).resize(
+        (width, height - new_top - bottom_band),
+        Image.Resampling.LANCZOS,
+    )
+    bottom = src.crop((0, height - bottom_band, width, height))
+    out = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    out.alpha_composite(top, (0, 0))
+    out.alpha_composite(middle, (0, new_top))
+    out.alpha_composite(bottom, (0, height - bottom_band))
+    return out
+
+
+def draw_vertical_text(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    box_xywh: tuple[int, int, int, int],
+    fill: tuple[int, int, int],
+    stroke_fill: tuple[int, int, int],
+) -> None:
+    x, y, w, h = box_xywh
+    size = 36 if len(text) <= 4 else 34 if len(text) <= 6 else 32
+    while size >= 28:
+        fnt = font(size)
+        gap = 3
+        metrics = []
+        total_h = 0
+        for char in text:
+            bbox = draw.textbbox((0, 0), char, font=fnt, stroke_width=2)
+            char_h = bbox[3] - bbox[1]
+            metrics.append((char, char_h))
+            total_h += char_h
+        total_h += gap * (len(metrics) - 1)
+        if total_h <= h:
+            break
+        size -= 1
+    cx = x + w / 2
+    cy = y + (h - total_h) / 2
+    for char, char_h in metrics:
+        draw.text((cx, cy + 2), char, font=fnt, fill=(0, 0, 0), stroke_width=2, stroke_fill=(0, 0, 0), anchor="ma")
+        cy += char_h + gap
+    cy = y + (h - total_h) / 2
+    for char, char_h in metrics:
+        draw.text((cx, cy), char, font=fnt, fill=fill, stroke_width=2, stroke_fill=stroke_fill, anchor="ma")
+        cy += char_h + gap
+
+
+def draw_bold_skill_text(draw: ImageDraw.ImageDraw, text: str, box_xywh: tuple[int, int, int, int]) -> None:
+    x, y, w, h = box_xywh
+    display = text or "无技能"
+    size = 30
+    while size >= 24:
+        fnt = font(size)
+        bbox = draw.textbbox((0, 0), display, font=fnt, stroke_width=3)
+        if bbox[2] - bbox[0] <= w and bbox[3] - bbox[1] <= h:
+            break
+        size -= 1
+    cx = x + w / 2
+    cy = y + h / 2 - 10
+    draw.text((cx, cy + 1), display, font=fnt, fill=(0, 0, 0), stroke_width=3, stroke_fill=(0, 0, 0), anchor="mm")
+    draw.text((cx, cy), display, font=fnt, fill=(243, 238, 228), stroke_width=3, stroke_fill=(30, 26, 24), anchor="mm")
+    draw.text((cx + 0.6, cy), display, font=fnt, fill=(243, 238, 228), anchor="mm")
+
+
+def draw_baigu_monster_front(card: dict) -> tuple[Image.Image, bool]:
+    stars = int(card["stars"])
+    img = Image.new("RGBA", (BLEED_W, BLEED_H), BAIGU_BLEED_BG + (255,))
+
+    art_box = BAIGU_LAYOUT["art_clip"]
+    art_path = resolve_art_path(card)
+    missing = not art_path.exists()
+    if missing:
+        art, _ = load_art(card, xywh_to_box(art_box))
+    else:
+        art = Image.open(art_path).convert("RGB")
+        art = cover_crop(art, (art_box[2], art_box[3]), focus=(0.52, 0.43))
+        art = ImageEnhance.Color(art).enhance(0.98)
+        art = ImageEnhance.Contrast(art).enhance(1.0)
+    art_rgba = art.convert("RGBA")
+    art_rgba.putalpha(mask_rounded((art_box[2], art_box[3]), 32))
+    img.alpha_composite(art_rgba, (art_box[0], art_box[1]))
+
+    veil = Image.new("RGBA", (BLEED_W, BLEED_H), (0, 0, 0, 0))
+    veil_draw = ImageDraw.Draw(veil)
+    veil_draw.rounded_rectangle(xywh_to_box(art_box), radius=32, fill=BAIGU_BLEED_BG + (18,))
+    img.alpha_composite(veil)
+
+    skillbar = make_baigu_skillbar(BAIGU_LAYOUT["skillbar"])
+    img.alpha_composite(skillbar, (BAIGU_LAYOUT["skillbar"][0], BAIGU_LAYOUT["skillbar"][1]))
+    paste_fit_rgba(img, load_baigu_asset(f"frame_{stars}"), BAIGU_LAYOUT["frame_box"])
+    paste_fit_rgba(img, load_baigu_asset("nameplate"), BAIGU_LAYOUT["nameplate"])
+
+    star_asset = load_baigu_asset(f"star_{stars}")
+    star_w, star_h = BAIGU_LAYOUT["star_size"]
+    for x, y in BAIGU_LAYOUT["star_positions"][:stars]:
+        paste_fit_rgba(img, star_asset, (x, y, star_w, star_h))
+
+    draw = ImageDraw.Draw(img)
+    name_color = (244, 227, 178) if stars == 3 else (247, 244, 238)
+    draw_vertical_text(draw, card["name"], BAIGU_LAYOUT["name_safe"], name_color, (42, 33, 29))
+    draw_bold_skill_text(draw, card.get("skill_text", ""), BAIGU_LAYOUT["skill_safe"])
+    return img.convert("RGB"), missing
 
 
 def mask_rounded(size: tuple[int, int], radius: int) -> Image.Image:
@@ -337,6 +567,10 @@ def paste_art_with_frame(
 
 
 def draw_monster_front(card: dict) -> tuple[Image.Image, bool]:
+    return draw_baigu_monster_front(card)
+
+
+def draw_legacy_monster_front(card: dict) -> tuple[Image.Image, bool]:
     palette = TYPE_COLORS[card["type"]]
     img = gradient_background((BLEED_W, BLEED_H), (71, 54, 52), (23, 27, 35)).convert("RGB")
     draw = ImageDraw.Draw(img)

@@ -1,0 +1,29 @@
+{
+  "source": "/Users/weijie/Downloads/BAA36813-B18D-4BF8-A141-3AD76FFAADAF.PNG",
+  "source_size": {
+    "width": 1055,
+    "height": 1491
+  },
+  "asset": {
+    "file": "2星卡边框.png",
+    "name_zh": "2星卡边框",
+    "source_box": {
+      "x": 43,
+      "y": 39,
+      "width": 935,
+      "height": 1410
+    },
+    "size": {
+      "width": 953,
+      "height": 1430
+    },
+    "padding": 8,
+    "alpha_bbox": [
+      8,
+      8,
+      945,
+      1422
+    ]
+  },
+  "process": "绿幕透明化 + 外接框裁切"
+}

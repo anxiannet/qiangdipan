@@ -1,0 +1,70 @@
+{
+  "source": "/Users/weijie/Downloads/8086d695-c5fa-485b-8097-100dc64d3397.png",
+  "source_size": {
+    "width": 1122,
+    "height": 1402
+  },
+  "padding": 8,
+  "assets": [
+    {
+      "file": "技能描述栏背景_1星.png",
+      "name_zh": "1星技能描述栏背景",
+      "note": "灰白骨纹/紫宝石 1星样式",
+      "source_box": {
+        "x": 46,
+        "y": 28,
+        "width": 1030,
+        "height": 330
+      },
+      "size": {
+        "width": 1045,
+        "height": 354
+      }
+    },
+    {
+      "file": "技能描述栏背景_2星.png",
+      "name_zh": "2星技能描述栏背景",
+      "note": "金色边框/黄宝石 2星样式",
+      "source_box": {
+        "x": 43,
+        "y": 360,
+        "width": 1035,
+        "height": 329
+      },
+      "size": {
+        "width": 1050,
+        "height": 361
+      }
+    },
+    {
+      "file": "技能描述栏背景_3星.png",
+      "name_zh": "3星技能描述栏背景",
+      "note": "橙金边框/红宝石 3星样式",
+      "source_box": {
+        "x": 43,
+        "y": 691,
+        "width": 1036,
+        "height": 328
+      },
+      "size": {
+        "width": 1051,
+        "height": 360
+      }
+    },
+    {
+      "file": "技能描述栏背景_法宝卡.png",
+      "name_zh": "法宝卡技能描述栏背景",
+      "note": "紫色边框/紫宝石 法宝卡样式",
+      "source_box": {
+        "x": 44,
+        "y": 1022,
+        "width": 1034,
+        "height": 329
+      },
+      "size": {
+        "width": 1048,
+        "height": 353
+      }
+    }
+  ]
+}

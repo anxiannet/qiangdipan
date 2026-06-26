@@ -1,0 +1,18 @@
+{
+  "source": "/Users/weijie/Downloads/red_gold_frame_673x969_transparent.PNG",
+  "asset": {
+    "file": "3星卡边框.png",
+    "name_zh": "3星卡边框",
+    "size": {
+      "width": 673,
+      "height": 969
+    },
+    "alpha_bbox": [
+      0,
+      0,
+      673,
+      969
+    ]
+  },
+  "process": "源图已为 RGBA 透明 PNG，直接规范命名导出"
+}

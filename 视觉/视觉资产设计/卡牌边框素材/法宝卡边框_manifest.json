@@ -1,0 +1,23 @@
+{
+  "source": "/Users/weijie/Downloads/bc224948-81c5-496a-86a2-c5f0b443b3da.png",
+  "source_size": {
+    "width": 1046,
+    "height": 1504
+  },
+  "asset": {
+    "file": "法宝卡边框.png",
+    "name_zh": "法宝卡边框",
+    "source_box": {
+      "x": 40,
+      "y": 15,
+      "width": 972,
+      "height": 1465
+    },
+    "size": {
+      "width": 988,
+      "height": 1481
+    },
+    "padding": 8
+  },
+  "process": "棋盘格背景透明化 + 外接框裁切"
+}
