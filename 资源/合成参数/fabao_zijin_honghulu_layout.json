@@ -1,0 +1,71 @@
+{
+  "card": "紫金红葫芦",
+  "slug": "zijin_honghulu",
+  "updated_at": "2026-06-28",
+  "canvas": {
+    "width": 815,
+    "height": 1110,
+    "bleed_background": "#10243D"
+  },
+  "trim": {
+    "x": 36,
+    "y": 36,
+    "width": 744,
+    "height": 1039
+  },
+  "safe": {
+    "x": 71,
+    "y": 71,
+    "width": 673,
+    "height": 969
+  },
+  "resources": {
+    "frame": "资源/UI/法宝卡/fabao_frame_clean_name_bg_dark30.png",
+    "art": "资源/插画/法宝/zijin_honghulu.png",
+    "approved_clean": "资源/审核定稿/紫金红葫芦_clean_815x1110.png"
+  },
+  "layout": {
+    "frame_box": {
+      "x": 71,
+      "y": 71,
+      "width": 673,
+      "height": 969
+    },
+    "art_clip": {
+      "x": 133,
+      "y": 185,
+      "width": 549,
+      "height": 675
+    },
+    "name_safe": {
+      "x": 198,
+      "y": 137,
+      "width": 420,
+      "height": 54
+    },
+    "skill_safe": {
+      "x": 173,
+      "y": 893,
+      "width": 470,
+      "height": 76
+    }
+  },
+  "typography": {
+    "name": {
+      "font_size": 56,
+      "tracking": 8,
+      "offset_y": 5,
+      "fill": "#FAECBE",
+      "stroke": "#2A180E",
+      "stroke_width": 4,
+      "double_draw": false
+    },
+    "skill": {
+      "max_font_size": 34,
+      "offset_y": -10,
+      "fill": "#F6EEDE",
+      "stroke": "#1E1410",
+      "stroke_width": 2
+    }
+  }
+}
