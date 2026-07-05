@@ -1,0 +1,403 @@
+{
+  "version": "v1",
+  "project": "夕妖：抢地盘",
+  "purpose": "第一版印刷文件的网站展示资源副本",
+  "source_root": "印刷/",
+  "public_root": "/assets/print/v1/",
+  "source_note": "原始印刷文件仍以仓库 印刷/ 目录为准，web/public/assets/print/v1/ 仅作为 qdp.weijie.sg 网站运行时展示资源。",
+  "rules_note": "本目录不维护第二份规则、卡表或技能文案。规则仍以规则/ 与 卡牌成品/印刷说明.md 为准。",
+  "files": [
+    {
+      "type": "doc",
+      "name": "README",
+      "source_path": "印刷/包装盒/第一版/README.md",
+      "public_path": "/assets/print/v1/docs/box-print-readme.md",
+      "category": "doc",
+      "note": "第一版印刷说明或交付说明网站展示副本"
+    },
+    {
+      "type": "box",
+      "name": "包装盒-第一版-右侧面",
+      "source_path": "印刷/包装盒/第一版/可打印文件/包装盒-第一版-右侧面.jpeg",
+      "public_path": "/assets/print/v1/box/包装盒-第一版-右侧面.jpeg",
+      "category": "box",
+      "note": "包装盒第一版印刷资源网站展示副本"
+    },
+    {
+      "type": "box",
+      "name": "包装盒-第一版-左侧面",
+      "source_path": "印刷/包装盒/第一版/可打印文件/包装盒-第一版-左侧面.jpeg",
+      "public_path": "/assets/print/v1/box/包装盒-第一版-左侧面.jpeg",
+      "category": "box",
+      "note": "包装盒第一版印刷资源网站展示副本"
+    },
+    {
+      "type": "box",
+      "name": "包装盒-第一版-正面",
+      "source_path": "印刷/包装盒/第一版/可打印文件/包装盒-第一版-正面.png",
+      "public_path": "/assets/print/v1/box/包装盒-第一版-正面.png",
+      "category": "box",
+      "note": "包装盒第一版印刷资源网站展示副本"
+    },
+    {
+      "type": "box",
+      "name": "包装盒-第一版-背面",
+      "source_path": "印刷/包装盒/第一版/可打印文件/包装盒-第一版-背面.png",
+      "public_path": "/assets/print/v1/box/包装盒-第一版-背面.png",
+      "category": "box",
+      "note": "包装盒第一版印刷资源网站展示副本"
+    },
+    {
+      "type": "doc",
+      "name": "README",
+      "source_path": "印刷/卡牌/第一版/README.md",
+      "public_path": "/assets/print/v1/docs/card-print-readme.md",
+      "category": "doc",
+      "note": "第一版印刷说明或交付说明网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_火云_火焰山",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_火云_火焰山.png",
+      "public_path": "/assets/print/v1/cards/land_火云_火焰山.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_火云_翠云山",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_火云_翠云山.png",
+      "public_path": "/assets/print/v1/cards/land_火云_翠云山.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_火云_芭蕉洞",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_火云_芭蕉洞.png",
+      "public_path": "/assets/print/v1/cards/land_火云_芭蕉洞.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_狮驼_狮驼国",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_狮驼_狮驼国.png",
+      "public_path": "/assets/print/v1/cards/land_狮驼_狮驼国.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_狮驼_狮驼岭",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_狮驼_狮驼岭.png",
+      "public_path": "/assets/print/v1/cards/land_狮驼_狮驼岭.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_狮驼_狮驼洞",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_狮驼_狮驼洞.png",
+      "public_path": "/assets/print/v1/cards/land_狮驼_狮驼洞.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_白骨_乱葬岗",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_白骨_乱葬岗.png",
+      "public_path": "/assets/print/v1/cards/land_白骨_乱葬岗.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_白骨_埋骨坡",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_白骨_埋骨坡.png",
+      "public_path": "/assets/print/v1/cards/land_白骨_埋骨坡.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_白骨_白骨岭",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_白骨_白骨岭.png",
+      "public_path": "/assets/print/v1/cards/land_白骨_白骨岭.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_盘丝_濯垢泉",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_盘丝_濯垢泉.png",
+      "public_path": "/assets/print/v1/cards/land_盘丝_濯垢泉.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_盘丝_盘丝洞",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_盘丝_盘丝洞.png",
+      "public_path": "/assets/print/v1/cards/land_盘丝_盘丝洞.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "land_盘丝_黄花观",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/land_盘丝_黄花观.png",
+      "public_path": "/assets/print/v1/cards/land_盘丝_黄花观.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "xiyao_qiangdipan_land_back",
+      "source_path": "印刷/卡牌/第一版/可打印文件/地盘卡/xiyao_qiangdipan_land_back.png",
+      "public_path": "/assets/print/v1/cards/xiyao_qiangdipan_land_back.png",
+      "category": "back",
+      "note": "卡背印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_1_伶俐虫",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_1_伶俐虫.png",
+      "public_path": "/assets/print/v1/cards/monster_1_伶俐虫.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_1_小钻风",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_1_小钻风.png",
+      "public_path": "/assets/print/v1/cards/monster_1_小钻风.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_1_快如风",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_1_快如风.png",
+      "public_path": "/assets/print/v1/cards/monster_1_快如风.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_1_急如火",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_1_急如火.png",
+      "public_path": "/assets/print/v1/cards/monster_1_急如火.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_1_有来有去",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_1_有来有去.png",
+      "public_path": "/assets/print/v1/cards/monster_1_有来有去.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_1_精细鬼",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_1_精细鬼.png",
+      "public_path": "/assets/print/v1/cards/monster_1_精细鬼.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_2_云里雾",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_2_云里雾.png",
+      "public_path": "/assets/print/v1/cards/monster_2_云里雾.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_2_雾里云",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_2_雾里云.png",
+      "public_path": "/assets/print/v1/cards/monster_2_雾里云.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_3_玉面狐狸",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_3_玉面狐狸.png",
+      "public_path": "/assets/print/v1/cards/monster_3_玉面狐狸.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_3_白骨精",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_3_白骨精.png",
+      "public_path": "/assets/print/v1/cards/monster_3_白骨精.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_3_金角大王",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_3_金角大王.png",
+      "public_path": "/assets/print/v1/cards/monster_3_金角大王.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_3_金鼻白毛老鼠精",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_3_金鼻白毛老鼠精.png",
+      "public_path": "/assets/print/v1/cards/monster_3_金鼻白毛老鼠精.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_3_铁扇公主",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_3_铁扇公主.png",
+      "public_path": "/assets/print/v1/cards/monster_3_铁扇公主.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_3_银角大王",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_3_银角大王.png",
+      "public_path": "/assets/print/v1/cards/monster_3_银角大王.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_3_黄袍怪",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_3_黄袍怪.png",
+      "public_path": "/assets/print/v1/cards/monster_3_黄袍怪.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_4_红孩儿",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_4_红孩儿.png",
+      "public_path": "/assets/print/v1/cards/monster_4_红孩儿.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_4_青狮精",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_4_青狮精.png",
+      "public_path": "/assets/print/v1/cards/monster_4_青狮精.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_4_黄风怪",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_4_黄风怪.png",
+      "public_path": "/assets/print/v1/cards/monster_4_黄风怪.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_5_大鹏精",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_5_大鹏精.png",
+      "public_path": "/assets/print/v1/cards/monster_5_大鹏精.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "monster_5_牛魔王",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/monster_5_牛魔王.png",
+      "public_path": "/assets/print/v1/cards/monster_5_牛魔王.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "xiyao_qiangdipan_deck_back",
+      "source_path": "印刷/卡牌/第一版/可打印文件/妖怪卡/xiyao_qiangdipan_deck_back.png",
+      "public_path": "/assets/print/v1/cards/xiyao_qiangdipan_deck_back.png",
+      "category": "monster",
+      "note": "妖怪牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "guide_A_回合与行动",
+      "source_path": "印刷/卡牌/第一版/可打印文件/指南卡/guide_A_回合与行动.png",
+      "public_path": "/assets/print/v1/cards/guide_A_回合与行动.png",
+      "category": "guide",
+      "note": "指南卡印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "guide_A_开局与目标",
+      "source_path": "印刷/卡牌/第一版/可打印文件/指南卡/guide_A_开局与目标.png",
+      "public_path": "/assets/print/v1/cards/guide_A_开局与目标.png",
+      "category": "guide",
+      "note": "指南卡印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "guide_B_关键规则与结算",
+      "source_path": "印刷/卡牌/第一版/可打印文件/指南卡/guide_B_关键规则与结算.png",
+      "public_path": "/assets/print/v1/cards/guide_B_关键规则与结算.png",
+      "category": "guide",
+      "note": "指南卡印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "guide_B_抢地盘与战斗",
+      "source_path": "印刷/卡牌/第一版/可打印文件/指南卡/guide_B_抢地盘与战斗.png",
+      "public_path": "/assets/print/v1/cards/guide_B_抢地盘与战斗.png",
+      "category": "territory",
+      "note": "地盘牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "artifact_幌金绳",
+      "source_path": "印刷/卡牌/第一版/可打印文件/法宝卡/artifact_幌金绳.png",
+      "public_path": "/assets/print/v1/cards/artifact_幌金绳.png",
+      "category": "treasure",
+      "note": "法宝牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "artifact_紫金红葫芦",
+      "source_path": "印刷/卡牌/第一版/可打印文件/法宝卡/artifact_紫金红葫芦.png",
+      "public_path": "/assets/print/v1/cards/artifact_紫金红葫芦.png",
+      "category": "treasure",
+      "note": "法宝牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "artifact_芭蕉扇",
+      "source_path": "印刷/卡牌/第一版/可打印文件/法宝卡/artifact_芭蕉扇.png",
+      "public_path": "/assets/print/v1/cards/artifact_芭蕉扇.png",
+      "category": "treasure",
+      "note": "法宝牌印刷图网站展示副本"
+    },
+    {
+      "type": "card",
+      "name": "artifact_金刚琢",
+      "source_path": "印刷/卡牌/第一版/可打印文件/法宝卡/artifact_金刚琢.png",
+      "public_path": "/assets/print/v1/cards/artifact_金刚琢.png",
+      "category": "treasure",
+      "note": "法宝牌印刷图网站展示副本"
+    },
+    {
+      "type": "doc",
+      "name": "印刷说明",
+      "source_path": "卡牌成品/印刷说明.md",
+      "public_path": "/assets/print/v1/docs/印刷说明.md",
+      "category": "doc",
+      "note": "印刷说明文档网站展示副本；原始文件仍以卡牌成品/印刷说明.md为准"
+    }
+  ]
+}
