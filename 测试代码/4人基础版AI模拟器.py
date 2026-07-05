@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-《夕妖：抢地盘》4人基础版 AI 自动模拟器
+《夕妖：抢地盘》基础版 AI 自动模拟器
 
 用途：
-- 验证基础版4人规则是否闭环。
+- 验证基础版2~4人规则是否闭环。
 - 对比不同公共牌库复制数方案。
 - 对比不同AI行为模型对游戏收束、地盘回流、空库结算的影响。
 
@@ -16,11 +16,14 @@
 1. aggressive：压力测试AI。能抢就抢，用于放大互抢、回流、空库风险。
 2. human_like：真人近似AI。目标导向，避免无意义互抢，避免轻易掏空自己的地盘。
 
+玩家人数：
+--players 支持 2、3、4。
+
 运行：
-python3 测试代码/4人基础版AI模拟器.py --preset current_58 --ai aggressive --games 3000 --seed 20260705
-python3 测试代码/4人基础版AI模拟器.py --preset current_58 --ai human_like --games 3000 --seed 20260705
-python3 测试代码/4人基础版AI模拟器.py --preset reduced_42 --ai aggressive --games 3000 --seed 20260705
-python3 测试代码/4人基础版AI模拟器.py --preset reduced_42 --ai human_like --games 3000 --seed 20260705
+python3 测试代码/4人基础版AI模拟器.py --players 2 --preset current_58 --ai human_like --games 3000 --seed 20260705
+python3 测试代码/4人基础版AI模拟器.py --players 3 --preset current_58 --ai human_like --games 3000 --seed 20260705
+python3 测试代码/4人基础版AI模拟器.py --players 4 --preset current_58 --ai human_like --games 3000 --seed 20260705
+python3 测试代码/4人基础版AI模拟器.py --players 4 --preset reduced_42 --ai aggressive --games 3000 --seed 20260705
 
 注意：
 本代码是规则验证型AI，不是强竞技AI。
@@ -75,12 +78,14 @@ class GameResult:
 
 
 class Game:
-    def __init__(self, preset: str, ai: str, seed: int):
+    def __init__(self, preset: str, ai: str, players_count: int, seed: int):
         if ai not in ("aggressive", "human_like"):
             raise ValueError(f"未知AI: {ai}")
+        if players_count not in (2, 3, 4):
+            raise ValueError(f"基础版仅支持2~4人测试，当前players={players_count}")
         self.ai = ai
+        self.players = list(range(players_count))
         self.rng = random.Random(seed)
-        self.players = list(range(4))
         self.turn_index = 0
         self.turns = 0
         self.hands: Dict[int, List[Card]] = {p: [] for p in self.players}
@@ -99,7 +104,7 @@ class Game:
         for p in self.players:
             self.draw(p, 5)
         self.refill_center()
-        self.turn_index = self.rng.randrange(4)
+        self.turn_index = self.rng.randrange(len(self.players))
 
     def draw(self, player: int, count: int = 1) -> None:
         for _ in range(count):
@@ -168,7 +173,7 @@ class Game:
             self.draw(player, 1)
             self.discard_lowest(player)
         elif card.name == "急如火":
-            if self.rng.random() < 0.5:
+            if enemies and self.rng.random() < 0.5:
                 target = self.rng.choice(enemies)
                 self.draw(player, 1)
                 self.draw(target, 1)
@@ -408,7 +413,7 @@ class Game:
         return True
 
     def take_turn(self) -> Optional[GameResult]:
-        player = self.turn_index % 4
+        player = self.turn_index % len(self.players)
         self.turn_index += 1
         self.turns += 1
         progress_before = self.snapshot_progress()
@@ -446,7 +451,7 @@ class Game:
                 self.no_progress_round += 1
             else:
                 self.no_progress_round = 0
-            if self.no_progress_round >= 4:
+            if self.no_progress_round >= len(self.players):
                 winner = self.settlement_winner()
                 reason = "公共牌库耗尽结算" if winner is not None else "平局结算"
                 return GameResult(winner, reason, self.turns, len(self.deck), True, self.territory_returns, self.successful_attacks, True)
@@ -544,16 +549,16 @@ def domain_need_score(player: int, territory: Territory, owned: Dict[int, List[T
     return have * 10 + (3 - len(territory.guards))
 
 
-def run_batch(preset: str, ai: str, games: int, seed: int) -> Dict[str, object]:
+def run_batch(preset: str, ai: str, players_count: int, games: int, seed: int) -> Dict[str, object]:
     results: List[GameResult] = []
     for i in range(games):
-        g = Game(preset, ai, seed + i)
+        g = Game(preset, ai, players_count, seed + i)
         result = None
         while result is None:
             result = g.take_turn()
         results.append(result)
 
-    winners = {p: sum(1 for r in results if r.winner == p) for p in range(4)}
+    winners = {p: sum(1 for r in results if r.winner == p) for p in range(players_count)}
     draws = sum(1 for r in results if r.winner is None)
     reasons: Dict[str, int] = {}
     for r in results:
@@ -566,6 +571,7 @@ def run_batch(preset: str, ai: str, games: int, seed: int) -> Dict[str, object]:
     return {
         "preset": preset,
         "ai": ai,
+        "players": players_count,
         "games": games,
         "seed": seed,
         "winners": winners,
@@ -583,14 +589,15 @@ def run_batch(preset: str, ai: str, games: int, seed: int) -> Dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--players", type=int, choices=[2, 3, 4], default=4)
     parser.add_argument("--preset", choices=["current_58", "reduced_42"], default="reduced_42")
     parser.add_argument("--ai", choices=["aggressive", "human_like"], default="aggressive")
     parser.add_argument("--games", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=20260705)
     args = parser.parse_args()
 
-    summary = run_batch(args.preset, args.ai, args.games, args.seed)
-    print("=== 4人基础版AI模拟结果 ===")
+    summary = run_batch(args.preset, args.ai, args.players, args.games, args.seed)
+    print("=== 基础版AI模拟结果 ===")
     for key, value in summary.items():
         print(f"{key}: {value}")
 
