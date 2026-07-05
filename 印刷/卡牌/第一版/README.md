@@ -1,0 +1,40 @@
+# 卡牌第一版实际打印文件
+
+本目录存放《夕妖：抢地盘》卡牌第一版实际打印相关文件。
+
+## 目录说明
+
+```text
+预览图/      用于查看单卡或拼版效果图
+可打印文件/  用于存放实际送印文件，如单卡出血图、拼版 PDF、工厂确认稿
+源文件/      用于存放可编辑源文件，如 PSD、AI、Figma、Canva 导出源稿
+```
+
+## 卡牌类型
+
+```text
+妖怪卡/
+法宝卡/
+地盘卡/
+指南卡/
+```
+
+## 使用原则
+
+- 本目录只保存第一版卡牌实际打印文件。
+- 本目录不维护第二份卡表，不维护技能文案。
+- 卡牌名称、数量、类型、星级、技能等信息仍以 `规则/` 与 `卡牌成品/印刷说明.md` 中的当前版本为准。
+- 实际送印文件必须符合尺寸、出血、安全区、方向和 clean 成品图要求。
+
+## 建议命名
+
+```text
+monster_1_小钻风_01_front.png
+monster_5_牛魔王_01_front.png
+artifact_紫金红葫芦_01_front.png
+land_火云_火焰山_front.png
+guide_A_front.png
+guide_A_back.png
+xiyao_qiangdipan_deck_back.png
+xiyao_qiangdipan_land_back.png
+```
