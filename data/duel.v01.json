@@ -1,0 +1,107 @@
+{
+  "schema": "duel.v01",
+  "project": "夕妖：抢地盘",
+  "mode_name": "夕妖：妖王对战 V0.1",
+  "purpose": "供人机对战、AI验证和后续联网对战读取的双人对战测试数据。此文件不是新的规则来源。",
+  "source_of_truth": [
+    "规则/未来扩展与双人对战计划.md",
+    "规则/双人对战V0.1-召唤延迟调整.md",
+    "规则/双人对战V0.1-AI验证记录.md",
+    "data/cards.v1.json"
+  ],
+  "mode_status": "测试草案，不是《抢地盘》基础版规则",
+  "deck_building": {
+    "per_player_base_box": 1,
+    "deck_size": 30,
+    "select_from_supported_pool": 32,
+    "same_name_limit": 2,
+    "five_star_limit_per_name": 1,
+    "treasures_allowed": false,
+    "territories_in_deck": false,
+    "guide_cards_in_deck": false
+  },
+  "life": {
+    "values": [12, 24],
+    "default_fast_test": 12,
+    "long_test": 24,
+    "name": "地盘生命",
+    "territory_cards_as_counter": true
+  },
+  "energy": {
+    "name": "妖气",
+    "curve": [1, 2, 3, 4, 5],
+    "max": 5,
+    "carry_over": false,
+    "cost_rule": "妖怪星级 = 打出费用"
+  },
+  "combat": {
+    "stat_rule": "妖怪星级 = 血量 = 造成伤害",
+    "summoning_delay": true,
+    "summoning_delay_text": "妖怪打出的当回合不能进行普通攻击。",
+    "dapeng_exception": true,
+    "dapeng_exception_text": "大鹏精打出时，仍按技能立即进行1次攻击。",
+    "attack_per_turn": 1,
+    "must_attack_monster_first": true,
+    "direct_attack_when_no_enemy_monster": true,
+    "damage_clears_at_end_phase": true,
+    "hard_board_limit": null
+  },
+  "turn_flow": [
+    "抽牌阶段",
+    "妖气阶段",
+    "打牌阶段",
+    "攻击阶段",
+    "结束阶段"
+  ],
+  "setup": {
+    "starting_hand": 5,
+    "mulligan": false,
+    "first_player_first_turn_draw": false,
+    "random_first_player": true
+  },
+  "win_conditions": [
+    "对方地盘生命降到0或以下",
+    "对方需要抽牌但牌组为空并因失去生命归零",
+    "对方认输"
+  ],
+  "supported_cards": [
+    {"card_id":"monster-xiaozuanfeng","name":"小钻风","copies":2,"duel_text":"查对方牌组顶牌，可置顶或置底。","duel_status":"supported"},
+    {"card_id":"monster-youlaiyouqu","name":"有来有去","copies":2,"duel_text":"抽1张牌，然后弃1张牌。","duel_status":"supported"},
+    {"card_id":"monster-jingxigui","name":"精细鬼","copies":2,"duel_text":"查你的牌组顶牌，可置顶或置底。","duel_status":"supported"},
+    {"card_id":"monster-linglichong","name":"伶俐虫","copies":2,"duel_text":"随机查看一名玩家手牌中的1张。","duel_status":"supported"},
+    {"card_id":"monster-jiruhuo","name":"急如火","copies":2,"duel_text":"喊一名玩家；答应后各抽1张。","duel_status":"supported"},
+    {"card_id":"monster-kuairufeng","name":"快如风","copies":2,"duel_text":"将对方牌组顶1张放到牌组底。","duel_status":"supported"},
+    {"card_id":"monster-yunliwu","name":"云里雾","copies":2,"duel_text":"重洗对方牌组。","duel_status":"supported"},
+    {"card_id":"monster-wuliyun","name":"雾里云","copies":2,"duel_text":"重洗你的牌组。","duel_status":"supported"},
+    {"card_id":"monster-jinjiaodawang","name":"金角大王","copies":2,"duel_text":"查对方牌组1张，任意放回。","duel_status":"supported"},
+    {"card_id":"monster-yinjiaodawang","name":"银角大王","copies":2,"duel_text":"查你的牌组顶3张，任意排序。","duel_status":"supported"},
+    {"card_id":"monster-baigujing","name":"白骨精","copies":2,"duel_text":"被消灭时，放回你的牌组并重洗。","duel_status":"supported"},
+    {"card_id":"monster-tieshangongzhu","name":"铁扇公主","copies":2,"duel_text":"吹回任意1个场上妖怪。","duel_status":"supported"},
+    {"card_id":"monster-honghaier","name":"红孩儿","copies":2,"duel_text":"消灭1个战场中的所有1星妖怪。","duel_status":"supported"},
+    {"card_id":"monster-huangfengguai","name":"黄风怪","copies":2,"duel_text":"吹回1个战场中，2个3星以下妖怪。","duel_status":"supported"},
+    {"card_id":"monster-qingshijing","name":"青狮精","copies":2,"duel_text":"消灭1个4星以下妖怪。","duel_status":"supported"},
+    {"card_id":"monster-niumowang","name":"牛魔王","copies":1,"duel_text":"立即再打出1张妖怪牌。","duel_status":"supported","test_note":"优先采用仍需支付妖气的安全读法。"},
+    {"card_id":"monster-dapengjing","name":"大鹏精","copies":1,"duel_text":"打出时，大鹏精立即进行1次攻击。","duel_status":"supported","test_note":"技能攻击不受召唤延迟限制。"}
+  ],
+  "unsupported_cards": [
+    {"card_id":"monster-yumianhuli","name":"玉面狐狸","copies":2,"reason":"原文需要说明牛魔王来源、驻守方式和1回合结束处理。"},
+    {"card_id":"monster-jinbibaimaolaoshujing","name":"金鼻白毛老鼠精","copies":2,"reason":"会改变场上控制权，需要额外归属细则。"},
+    {"card_id":"monster-huangpaoguai","name":"黄袍怪","copies":2,"reason":"会把对方实体牌加入你的手牌，容易混淆双方牌库与弃牌堆归属。"},
+    {"card_id":"treasure-zijin-honghulu","name":"紫金红葫芦","copies":1,"reason":"会收走对方守军到你的手牌，容易混淆实体牌归属。"},
+    {"card_id":"treasure-jingangzhuo","name":"金刚琢","copies":1,"reason":"当前V0.1不使用其他支持法宝牌，取消法宝效果的作用场景不足。"},
+    {"card_id":"treasure-huangjinsheng","name":"幌金绳","copies":1,"reason":"会选择守军加入你的手牌，容易混淆双方实体牌归属。"},
+    {"card_id":"treasure-bajiaoshan","name":"芭蕉扇","copies":1,"reason":"吹回1个战场中的所有妖怪，节奏影响过强，暂不支持。"}
+  ],
+  "ai_validation_summary": {
+    "without_summoning_delay": [
+      {"life":12,"cow_mode":"pay_remaining_energy","first_win_rate":0.799,"second_win_rate":0.201,"avg_turns":10.3,"avg_max_board":2.9,"judgement":"太快，先手优势过大"},
+      {"life":12,"cow_mode":"free_extra_monster","first_win_rate":0.8,"second_win_rate":0.2,"avg_turns":10.0,"avg_max_board":3.0,"judgement":"仍然太快"},
+      {"life":24,"cow_mode":"pay_remaining_energy","first_win_rate":0.59,"second_win_rate":0.41,"avg_turns":17.9,"avg_max_board":4.1,"judgement":"明显更稳"},
+      {"life":24,"cow_mode":"free_extra_monster","first_win_rate":0.597,"second_win_rate":0.403,"avg_turns":16.0,"avg_max_board":4.2,"judgement":"可测试，但节奏更快"}
+    ],
+    "with_summoning_delay": [
+      {"life":12,"first_win_rate":0.591,"second_win_rate":0.408,"avg_turns":19.5,"avg_max_board":6.6,"judgement":"先手优势明显下降，节奏可观察"},
+      {"life":24,"first_win_rate":0.566,"second_win_rate":0.426,"avg_turns":26.0,"avg_max_board":7.7,"judgement":"更稳但偏长，场面更大"}
+    ]
+  }
+}
