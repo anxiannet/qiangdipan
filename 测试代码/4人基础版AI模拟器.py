@@ -7,6 +7,7 @@
 - 验证基础版2~4人规则是否闭环。
 - 对比不同公共牌库复制数方案。
 - 对比不同AI行为模型对游戏收束、地盘回流、空库结算的影响。
+- 测试双人局专用地盘变体，例如2个妖域6张地盘、中央2张或3张。
 
 内置牌库 preset：
 1. current_58：当前V1.2基础公共牌库，58张。
@@ -16,14 +17,15 @@
 1. aggressive：压力测试AI。能抢就抢，用于放大互抢、回流、空库风险。
 2. human_like：真人近似AI。目标导向，避免无意义互抢，避免轻易掏空自己的地盘。
 
-玩家人数：
+参数：
 --players 支持 2、3、4。
+--domain-count 支持 2、3、4，表示本局使用几个妖域。
+--center-size 支持 2、3，表示中央地盘区维持几张地盘。
 
-运行：
-python3 测试代码/4人基础版AI模拟器.py --players 2 --preset current_58 --ai human_like --games 3000 --seed 20260705
-python3 测试代码/4人基础版AI模拟器.py --players 3 --preset current_58 --ai human_like --games 3000 --seed 20260705
-python3 测试代码/4人基础版AI模拟器.py --players 4 --preset current_58 --ai human_like --games 3000 --seed 20260705
-python3 测试代码/4人基础版AI模拟器.py --players 4 --preset reduced_42 --ai aggressive --games 3000 --seed 20260705
+运行示例：
+python3 测试代码/4人基础版AI模拟器.py --players 2 --domain-count 2 --center-size 2 --preset current_58 --ai human_like --games 3000 --seed 20260705
+python3 测试代码/4人基础版AI模拟器.py --players 2 --domain-count 2 --center-size 3 --preset reduced_42 --ai human_like --games 3000 --seed 20260705
+python3 测试代码/4人基础版AI模拟器.py --players 4 --domain-count 4 --center-size 3 --preset current_58 --ai human_like --games 3000 --seed 20260705
 
 注意：
 本代码是规则验证型AI，不是强竞技AI。
@@ -39,14 +41,12 @@ from dataclasses import dataclass, field
 from statistics import mean, median
 from typing import Dict, List, Optional, Tuple
 
-
 DOMAINS = {
     "白骨": ["白骨岭", "埋骨坡", "乱葬岗"],
     "火云": ["火焰山", "翠云山", "芭蕉洞"],
     "狮驼": ["狮驼岭", "狮驼洞", "狮驼国"],
     "盘丝": ["盘丝洞", "黄花观", "濯垢泉"],
 }
-
 
 @dataclass
 class Card:
@@ -56,14 +56,12 @@ class Card:
     owner: Optional[int] = None
     uid: int = 0
 
-
 @dataclass
 class Territory:
     domain: str
     name: str
     owner: Optional[int] = None
     guards: List[Card] = field(default_factory=list)
-
 
 @dataclass
 class GameResult:
@@ -76,15 +74,23 @@ class GameResult:
     successful_attacks: int
     draw_settlement: bool
 
-
 class Game:
-    def __init__(self, preset: str, ai: str, players_count: int, seed: int):
+    def __init__(self, preset: str, ai: str, players_count: int, domain_count: int, center_size: int, seed: int):
         if ai not in ("aggressive", "human_like"):
             raise ValueError(f"未知AI: {ai}")
         if players_count not in (2, 3, 4):
             raise ValueError(f"基础版仅支持2~4人测试，当前players={players_count}")
+        if domain_count not in (2, 3, 4):
+            raise ValueError(f"domain-count仅支持2~4，当前domain_count={domain_count}")
+        if center_size not in (2, 3):
+            raise ValueError(f"center-size仅支持2或3，当前center_size={center_size}")
+        if center_size > domain_count * 3:
+            raise ValueError("center-size不能大于地盘总数")
+
         self.ai = ai
         self.players = list(range(players_count))
+        self.domain_count = domain_count
+        self.center_size = center_size
         self.rng = random.Random(seed)
         self.turn_index = 0
         self.turns = 0
@@ -92,7 +98,8 @@ class Game:
         self.discard: List[Card] = []
         self.deck: List[Card] = build_public_deck(preset)
         self.rng.shuffle(self.deck)
-        self.territory_deck: List[Territory] = build_territory_deck()
+        self.available_domains = self.rng.sample(list(DOMAINS.keys()), domain_count)
+        self.territory_deck: List[Territory] = build_territory_deck(self.available_domains)
         self.rng.shuffle(self.territory_deck)
         self.center: List[Territory] = []
         self.owned: Dict[int, List[Territory]] = {p: [] for p in self.players}
@@ -116,7 +123,7 @@ class Game:
             self.hands[player].append(card)
 
     def refill_center(self) -> None:
-        while len(self.center) < 3 and self.territory_deck:
+        while len(self.center) < self.center_size and self.territory_deck:
             t = self.territory_deck.pop(0)
             t.owner = None
             t.guards = []
@@ -284,8 +291,7 @@ class Game:
         return max(candidates, key=lambda t: domain_need_score(player, t, self.owned))
 
     def use_treasure(self, player: int, card: Card) -> bool:
-        enemies = [p for p in self.players if p != player]
-        enemy_territories = [t for p in enemies for t in self.owned[p]]
+        enemy_territories = [t for p in self.players if p != player for t in self.owned[p]]
         if card.name == "芭蕉扇" and enemy_territories:
             t = max(enemy_territories, key=lambda x: len(x.guards))
             for g in list(t.guards):
@@ -341,16 +347,10 @@ class Game:
         if old_owner is not None and old_owner != player:
             enemy_same = sum(1 for t in self.owned[old_owner] if t.domain == dst.domain)
             block_threat = enemy_same >= 2
-
         source_empty = len(src.guards) == len(attackers)
         attacker_stars = sum(g.star for g in attackers)
         defender_stars = sum(g.star for g in dst.guards)
-        score = 0
-        score += own_same_before * 30
-        score += defender_stars * 3
-        score += len(survivors) * 6
-        score -= attacker_stars * 2
-
+        score = own_same_before * 30 + defender_stars * 3 + len(survivors) * 6 - attacker_stars * 2
         if direct_win:
             score += 120
         if block_threat:
@@ -368,7 +368,6 @@ class Game:
         targets = [t for p in self.players if p != player for t in self.owned[p] if t.guards]
         if not own or not targets:
             return False
-
         best: Optional[Tuple[int, Territory, Territory, List[Card], List[Card], List[Card]]] = None
         for src in own:
             guards = list(src.guards)
@@ -385,11 +384,9 @@ class Game:
                                 best = (score, src, dst, list(attackers), survivors, dead_attackers)
         if best is None:
             return False
-
         score, src, dst, attackers, survivors, dead_attackers = best
         if self.ai == "human_like" and score < 30:
             return False
-
         for g in attackers:
             if g in src.guards:
                 src.guards.remove(g)
@@ -417,10 +414,8 @@ class Game:
         self.turn_index += 1
         self.turns += 1
         progress_before = self.snapshot_progress()
-
         self.draw(player, 1)
         acted = False
-
         if self.ai == "aggressive":
             acted = self.try_attack(player)
             if not acted:
@@ -440,11 +435,9 @@ class Game:
                     acted = self.use_treasure(player, treasure)
             if not acted:
                 acted = self.recruit_best(player)
-
         winner = self.check_winner()
         if winner is not None:
             return GameResult(winner, "同妖域3地盘", self.turns, len(self.deck), self.deck_empty_once, self.territory_returns, self.successful_attacks, False)
-
         if not self.deck:
             after = self.snapshot_progress()
             if after == progress_before:
@@ -455,7 +448,6 @@ class Game:
                 winner = self.settlement_winner()
                 reason = "公共牌库耗尽结算" if winner is not None else "平局结算"
                 return GameResult(winner, reason, self.turns, len(self.deck), True, self.territory_returns, self.successful_attacks, True)
-
         if self.turns >= 200:
             return GameResult(None, "超时", self.turns, len(self.deck), self.deck_empty_once, self.territory_returns, self.successful_attacks, False)
         return None
@@ -467,7 +459,7 @@ class Game:
         scores = []
         for p in self.players:
             territories = self.owned[p]
-            domain_max = max([sum(1 for t in territories if t.domain == d) for d in DOMAINS] or [0])
+            domain_max = max([sum(1 for t in territories if t.domain == d) for d in self.available_domains] or [0])
             guard_stars = sum(g.star for t in territories for g in t.guards)
             guard_count = sum(len(t.guards) for t in territories)
             scores.append((len(territories), guard_stars, domain_max, guard_count, p))
@@ -476,13 +468,11 @@ class Game:
             return None
         return scores[0][4]
 
-
 def battle_outcome(attackers: List[Card], defenders: List[Card]) -> Tuple[bool, List[Card], List[Card]]:
     defenders_hp = {id(g): g.star for g in defenders}
     live_def = list(defenders)
     live_atk = list(attackers)
     dead_atk: List[Card] = []
-
     attack_order = sorted(attackers, key=lambda g: (g.star, card_priority(g.name)))
     for atk in attack_order:
         if not live_def:
@@ -498,7 +488,6 @@ def battle_outcome(attackers: List[Card], defenders: List[Card]) -> Tuple[bool, 
     success = len(live_def) == 0 and len(live_atk) > 0
     return success, live_atk, dead_atk
 
-
 def build_public_deck(preset: str) -> List[Card]:
     counts_current = {
         "小钻风": ("妖怪", 1, 4), "有来有去": ("妖怪", 1, 4), "精细鬼": ("妖怪", 1, 4),
@@ -506,9 +495,8 @@ def build_public_deck(preset: str) -> List[Card]:
         "云里雾": ("妖怪", 2, 4), "雾里云": ("妖怪", 2, 4),
         "金角大王": ("妖怪", 3, 2), "银角大王": ("妖怪", 3, 2), "白骨精": ("妖怪", 3, 2),
         "玉面狐狸": ("妖怪", 3, 2), "金鼻白毛老鼠精": ("妖怪", 3, 2), "黄袍怪": ("妖怪", 3, 2),
-        "铁扇公主": ("妖怪", 3, 2),
-        "红孩儿": ("妖怪", 4, 2), "黄风怪": ("妖怪", 4, 2), "青狮精": ("妖怪", 4, 2),
-        "牛魔王": ("妖怪", 5, 1), "大鹏精": ("妖怪", 5, 1),
+        "铁扇公主": ("妖怪", 3, 2), "红孩儿": ("妖怪", 4, 2), "黄风怪": ("妖怪", 4, 2),
+        "青狮精": ("妖怪", 4, 2), "牛魔王": ("妖怪", 5, 1), "大鹏精": ("妖怪", 5, 1),
         "紫金红葫芦": ("法宝", 0, 1), "金刚琢": ("法宝", 0, 1), "幌金绳": ("法宝", 0, 1), "芭蕉扇": ("法宝", 0, 1),
     }
     if preset == "current_58":
@@ -520,7 +508,6 @@ def build_public_deck(preset: str) -> List[Card]:
                 counts[name] = (kind, star, 2)
     else:
         raise ValueError(f"未知preset: {preset}")
-
     deck: List[Card] = []
     uid = 0
     for name, (kind, star, count) in counts.items():
@@ -529,10 +516,8 @@ def build_public_deck(preset: str) -> List[Card]:
             uid += 1
     return deck
 
-
-def build_territory_deck() -> List[Territory]:
-    return [Territory(domain=d, name=n) for d, names in DOMAINS.items() for n in names]
-
+def build_territory_deck(domains: List[str]) -> List[Territory]:
+    return [Territory(domain=d, name=n) for d in domains for n in DOMAINS[d]]
 
 def card_priority(name: str) -> int:
     return {
@@ -543,21 +528,18 @@ def card_priority(name: str) -> int:
         "伶俐虫": 26, "快如风": 26, "急如火": 18,
     }.get(name, 0)
 
-
 def domain_need_score(player: int, territory: Territory, owned: Dict[int, List[Territory]]) -> int:
     have = sum(1 for t in owned[player] if t.domain == territory.domain)
     return have * 10 + (3 - len(territory.guards))
 
-
-def run_batch(preset: str, ai: str, players_count: int, games: int, seed: int) -> Dict[str, object]:
+def run_batch(preset: str, ai: str, players_count: int, domain_count: int, center_size: int, games: int, seed: int) -> Dict[str, object]:
     results: List[GameResult] = []
     for i in range(games):
-        g = Game(preset, ai, players_count, seed + i)
+        g = Game(preset, ai, players_count, domain_count, center_size, seed + i)
         result = None
         while result is None:
             result = g.take_turn()
         results.append(result)
-
     winners = {p: sum(1 for r in results if r.winner == p) for p in range(players_count)}
     draws = sum(1 for r in results if r.winner is None)
     reasons: Dict[str, int] = {}
@@ -567,11 +549,12 @@ def run_batch(preset: str, ai: str, players_count: int, games: int, seed: int) -
     deck_left = [r.deck_left for r in results]
     returns = [r.territory_returns for r in results]
     attacks = [r.successful_attacks for r in results]
-
     return {
         "preset": preset,
         "ai": ai,
         "players": players_count,
+        "domain_count": domain_count,
+        "center_size": center_size,
         "games": games,
         "seed": seed,
         "winners": winners,
@@ -586,21 +569,20 @@ def run_batch(preset: str, ai: str, players_count: int, games: int, seed: int) -
         "avg_successful_attacks": round(mean(attacks), 2),
     }
 
-
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--players", type=int, choices=[2, 3, 4], default=4)
+    parser.add_argument("--domain-count", type=int, choices=[2, 3, 4], default=4)
+    parser.add_argument("--center-size", type=int, choices=[2, 3], default=3)
     parser.add_argument("--preset", choices=["current_58", "reduced_42"], default="reduced_42")
     parser.add_argument("--ai", choices=["aggressive", "human_like"], default="aggressive")
     parser.add_argument("--games", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=20260705)
     args = parser.parse_args()
-
-    summary = run_batch(args.preset, args.ai, args.players, args.games, args.seed)
+    summary = run_batch(args.preset, args.ai, args.players, args.domain_count, args.center_size, args.games, args.seed)
     print("=== 基础版AI模拟结果 ===")
     for key, value in summary.items():
         print(f"{key}: {value}")
-
 
 if __name__ == "__main__":
     main()
