@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>夕妖：妖王对战 V0.1 规则验证原型</title>
+  <style>
+    :root{--bg:#15110d;--panel:#241b13;--card:#f3dfb5;--ink:#2b1608;--muted:#bca37a;--gold:#d8a640;--bad:#c84e3a;--good:#47a66b;--blue:#4a8fcf}
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#21170f,#100c09);color:#f7ead0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    header{padding:14px 18px;border-bottom:1px solid #45321f;background:#1b120c;position:sticky;top:0;z-index:5} h1{margin:0;font-size:20px} .sub{color:var(--muted);font-size:13px;margin-top:4px}
+    main{display:grid;grid-template-columns:1fr 360px 1fr;gap:12px;padding:12px}.player,.center,.builder{background:rgba(36,27,19,.92);border:1px solid #4a3622;border-radius:14px;padding:12px}.player.active{box-shadow:0 0 0 2px var(--gold) inset}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.stat{background:#130d08;border:1px solid #4a3622;border-radius:999px;padding:5px 9px;font-size:13px}.life{color:#ffcf65}.energy{color:#82c7ff}.warn{color:#ffb1a6}.ok{color:#a6e3b8}
+    button{background:#3b2a19;color:#ffe8ba;border:1px solid #7d5a2d;border-radius:9px;padding:7px 10px;cursor:pointer}button:hover{background:#51391f}button:disabled{opacity:.35;cursor:not-allowed}.primary{background:#7a4d17;border-color:#e0a941}.danger{background:#653028;border-color:#c65b4d}
+    .zoneTitle{margin:12px 0 6px;color:#ffdc90;font-weight:700}.zone{display:flex;gap:8px;flex-wrap:wrap;min-height:72px;background:#17100a;border:1px dashed #4a3622;border-radius:10px;padding:8px}
+    .card{width:104px;min-height:136px;background:var(--card);color:var(--ink);border-radius:10px;border:2px solid #8b5c23;padding:7px;display:flex;flex-direction:column;gap:4px;box-shadow:0 3px 8px #0008}.card .name{font-weight:800}.card .meta{font-size:12px;color:#6b3d16}.card .text{font-size:12px;line-height:1.25}.card.small{width:86px;min-height:112px}.card.dead{opacity:.55}.selected{outline:3px solid var(--blue)}
+    .battleCard{position:relative}.badge{position:absolute;right:5px;top:5px;background:#331b0a;color:#ffd56b;border-radius:99px;padding:2px 6px;font-size:12px}.dmg{position:absolute;left:5px;top:5px;background:#8c2f25;color:white;border-radius:99px;padding:2px 6px;font-size:12px}.attacked{filter:grayscale(.7)}
+    .log{height:340px;overflow:auto;background:#110c08;border:1px solid #3e2a19;border-radius:10px;padding:8px;font-size:12px;line-height:1.45}.log div{border-bottom:1px solid #2b1d12;padding:3px 0}.controls{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.hint{font-size:12px;color:var(--muted);line-height:1.5}.builder{grid-column:1/4}.deckgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:8px}.pick{background:#1a120c;border:1px solid #3d2a19;border-radius:8px;padding:6px;font-size:13px}.pick input{transform:translateY(2px)}.hidden{display:none}.pill{font-size:12px;padding:3px 7px;border-radius:999px;background:#1a120c;border:1px solid #4a3622}
+    @media(max-width:1000px){main{grid-template-columns:1fr}.builder{grid-column:1}.center{order:-1}.card{width:96px}}
+  </style>
+</head>
+<body>
+<header>
+  <h1>夕妖：妖王对战 V0.1 规则验证原型</h1>
+  <div class="sub">32选30 / 12或24地盘生命 / 星级=费用=血量=伤害 / 无法宝 / 无场上数量上限 / 本地单页原型</div>
+</header>
+<main>
+  <section class="builder" id="builder">
+    <h2>开局设置</h2>
+    <div class="row">
+      <label>地盘生命：
+        <select id="lifeSelect"><option value="12">12点快速局</option><option value="24">24点长局</option></select>
+      </label>
+      <button onclick="selectDefault()">默认32选30</button>
+      <button class="primary" onclick="startGame()">开始验证</button>
+      <span class="hint">每名玩家当前使用同一套构筑。勾选正好30张。</span>
+      <span class="pill" id="pickCount">0 / 30</span>
+    </div>
+    <div class="deckgrid" id="deckPicks"></div>
+  </section>
+
+  <section class="player" id="p0Panel">
+    <h2>玩家一</h2>
+    <div class="row" id="p0Stats"></div>
+    <div class="zoneTitle">场上妖怪</div><div class="zone" id="p0Board"></div>
+    <div class="zoneTitle">手牌</div><div class="zone" id="p0Hand"></div>
+    <div class="zoneTitle">弃牌堆</div><div class="zone" id="p0Discard"></div>
+  </section>
+
+  <section class="center">
+    <h2>流程控制</h2>
+    <div class="row" id="turnInfo"></div>
+    <div class="controls">
+      <button class="primary" onclick="beginTurn()" id="beginBtn">开始回合</button>
+      <button onclick="endTurn()" id="endBtn" disabled>结束回合</button>
+      <button onclick="autoAttackFace()">可直攻时全体攻击</button>
+      <button class="danger" onclick="resetGame()">重开</button>
+    </div>
+    <div class="hint">
+      操作：点击手牌打出；点击己方未攻击妖怪，再点击敌方妖怪攻击。若对方无妖怪，点击己方妖怪可直攻。<br>
+      原型已定义：消灭进拥有者弃牌堆；吹回进拥有者手牌；白骨精被战斗或技能消灭都会回牌组重洗。
+    </div>
+    <div class="zoneTitle">日志</div><div class="log" id="log"></div>
+  </section>
+
+  <section class="player" id="p1Panel">
+    <h2>玩家二</h2>
+    <div class="row" id="p1Stats"></div>
+    <div class="zoneTitle">场上妖怪</div><div class="zone" id="p1Board"></div>
+    <div class="zoneTitle">手牌</div><div class="zone" id="p1Hand"></div>
+    <div class="zoneTitle">弃牌堆</div><div class="zone" id="p1Discard"></div>
+  </section>
+</main>
+<script>
+const baseCards=[
+ ['小钻风',1,'查对方牌组顶牌，可置顶或置底。'],['小钻风',1,'查对方牌组顶牌，可置顶或置底。'],
+ ['有来有去',1,'抽1张牌，然后弃1张牌。'],['有来有去',1,'抽1张牌，然后弃1张牌。'],
+ ['精细鬼',1,'查你的牌组顶牌，可置顶或置底。'],['精细鬼',1,'查你的牌组顶牌，可置顶或置底。'],
+ ['伶俐虫',1,'随机查看一名玩家手牌中的1张。'],['伶俐虫',1,'随机查看一名玩家手牌中的1张。'],
+ ['急如火',1,'喊一名玩家；答应后各抽1张。'],['急如火',1,'喊一名玩家；答应后各抽1张。'],
+ ['快如风',1,'将对方牌组顶1张放到牌组底。'],['快如风',1,'将对方牌组顶1张放到牌组底。'],
+ ['云里雾',2,'重洗对方牌组。'],['云里雾',2,'重洗对方牌组。'],['雾里云',2,'重洗你的牌组。'],['雾里云',2,'重洗你的牌组。'],
+ ['金角大王',3,'查对方牌组1张，任意放回。'],['金角大王',3,'查对方牌组1张，任意放回。'],['银角大王',3,'查你的牌组顶3张，任意排序。'],['银角大王',3,'查你的牌组顶3张，任意排序。'],
+ ['白骨精',3,'被消灭时，放回你的牌组并重洗。'],['白骨精',3,'被消灭时，放回你的牌组并重洗。'],['铁扇公主',3,'吹回任意1个场上妖怪。'],['铁扇公主',3,'吹回任意1个场上妖怪。'],
+ ['红孩儿',4,'消灭1个战场中的所有1星妖怪。'],['红孩儿',4,'消灭1个战场中的所有1星妖怪。'],['黄风怪',4,'吹回1个战场中，2个3星以下妖怪。'],['黄风怪',4,'吹回1个战场中，2个3星以下妖怪。'],['青狮精',4,'消灭1个4星以下妖怪。'],['青狮精',4,'消灭1个4星以下妖怪。'],
+ ['牛魔王',5,'立即再打出1张妖怪牌。'],['大鹏精',5,'打出时，大鹏精立即进行1次攻击。']
+].map((c,i)=>({id:i,name:c[0],star:c[1],text:c[2]}));
+let G=null, selected=null, pending=null;
+function el(id){return document.getElementById(id)}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function cloneCard(c,owner){return {...c, uid: owner+'-'+c.id+'-'+Math.random().toString(36).slice(2), owner, dmg:0, attacked:false}}
+function log(t){const d=document.createElement('div');d.textContent=t;el('log').prepend(d)}
+function renderPicks(){el('deckPicks').innerHTML=baseCards.map((c,i)=>`<label class="pick"><input type="checkbox" id="pick${i}" onchange="countPicks()"> ${c.name}　${c.star}星<br><span class="hint">${c.text}</span></label>`).join('');selectDefault()}
+function selectDefault(){baseCards.forEach((_,i)=>el('pick'+i).checked=i<30);countPicks()}
+function countPicks(){const n=baseCards.filter((_,i)=>el('pick'+i).checked).length;el('pickCount').textContent=n+' / 30';el('pickCount').className='pill '+(n===30?'ok':'warn')}
+function makePlayer(name,idx,life,deck){return {name,idx,life,maxLife:life,deck:shuffle(deck.map(c=>cloneCard(c,idx))),hand:[],board:[],discard:[],energy:0,turns:0,skippedFirstDraw:false}}
+function draw(p,n=1){for(let i=0;i<n;i++){if(p.deck.length===0){p.life-=1;log(`${p.name}牌组为空，失去1点地盘生命。`);continue}p.hand.push(p.deck.shift())}}
+function startGame(){const picked=baseCards.filter((_,i)=>el('pick'+i).checked);if(picked.length!==30){alert('必须正好选择30张。');return}const life=Number(el('lifeSelect').value);G={p:[makePlayer('玩家一',0,life,picked),makePlayer('玩家二',1,life,picked)],cur:0,phase:'idle',winner:null};G.p.forEach(p=>draw(p,5));el('builder').classList.add('hidden');log('开始游戏。当前为玩家一，点击“开始回合”。');render()}
+function resetGame(){location.reload()}
+function cur(){return G.p[G.cur]} function opp(){return G.p[1-G.cur]}
+function beginTurn(){if(!G||G.winner)return;const p=cur();p.turns++;p.energy=Math.min(p.turns,5);p.board.forEach(c=>{c.attacked=false;c.dmg=0});if(!(p.idx===0&&p.turns===1))draw(p,1);else log('玩家一首回合不抽牌。');G.phase='main';log(`${p.name}开始第${p.turns}回合，获得${p.energy}妖气。`);render()}
+function endTurn(){if(!G||G.phase==='idle')return;cur().board.forEach(c=>{c.dmg=0});cur().energy=0;G.cur=1-G.cur;G.phase='idle';selected=null;pending=null;log('回合结束。');checkWin();render()}
+function checkWin(){G.p.forEach(p=>{if(p.life<=0&&!G.winner){G.winner=G.p[1-p.idx];log(`${G.winner.name}获胜！`)}})}
+function playCard(pi,uid){if(!G||G.phase!=='main'||pi!==G.cur)return;const p=cur();const i=p.hand.findIndex(c=>c.uid===uid);if(i<0)return;const c=p.hand[i];if(p.energy<c.star){log('妖气不足。');return}p.energy-=c.star;p.hand.splice(i,1);p.board.push(c);log(`${p.name}打出${c.name}。`);resolveSkill(c);checkWin();render()}
+function resolveSkill(c){const p=G.p[c.owner], o=G.p[1-c.owner];switch(c.name){
+ case '小钻风': peekTop(o,true); break; case '精细鬼': peekTop(p,true); break; case '有来有去': draw(p,1); if(p.hand.length){const d=p.hand.pop();p.discard.push(d);log(`${p.name}弃掉${d.name}。`)} break;
+ case '伶俐虫': if(o.hand.length){const r=o.hand[Math.floor(Math.random()*o.hand.length)];log(`${p.name}随机查看：${o.name}手牌中有${r.name}。`)}else log(`${o.name}没有手牌。`); break;
+ case '急如火': draw(p,1); draw(o,1); log('双方各抽1张。'); break;
+ case '快如风': if(o.deck.length){o.deck.push(o.deck.shift());log(`${o.name}牌组顶牌被放到牌组底。`)} break;
+ case '云里雾': shuffle(o.deck);log(`${o.name}重洗牌组。`);break; case '雾里云': shuffle(p.deck);log(`${p.name}重洗牌组。`);break;
+ case '金角大王': peekTop(o,true); break; case '银角大王': if(p.deck.length){let top=p.deck.splice(0,3); if(confirm('银角大王查看：'+top.map(x=>x.name).join('、')+'。是否反向排序？'))top.reverse(); p.deck.unshift(...top); log('银角大王整理了牌组顶3张。')} break;
+ case '铁扇公主': chooseTarget('选择吹回目标', allBoard(), t=>bounce(t)); break;
+ case '红孩儿': allBoard().filter(x=>x.star===1).forEach(x=>destroy(x)); log('红孩儿消灭战场中所有1星妖怪。'); break;
+ case '黄风怪': chooseMultiple('选择最多2个3星以下妖怪吹回', allBoard().filter(x=>x.star<3), 2, arr=>arr.forEach(x=>bounce(x))); break;
+ case '青狮精': chooseTarget('选择1个4星以下妖怪消灭', allBoard().filter(x=>x.star<=4), t=>destroy(t)); break;
+ case '牛魔王': log('牛魔王效果：原型暂提示玩家可继续按妖气规则打出妖怪；是否改为免费打出，待测试决定。'); break;
+ case '大鹏精': log('大鹏精立即攻击：请选择攻击目标。'); selected=c; break;
+ }}
+function peekTop(p,allowBottom){if(!p.deck.length){log(`${p.name}牌组为空。`);return}const top=p.deck[0];if(allowBottom&&confirm(`查看${p.name}牌组顶牌：${top.name}。是否放到底？`)){p.deck.push(p.deck.shift());log(`${top.name}被放到${p.name}牌组底。`)}else log(`查看${p.name}牌组顶牌：${top.name}。`)}
+function allBoard(){return [...G.p[0].board,...G.p[1].board]}
+function removeFromBoard(card){const p=G.p[card.owner];const i=p.board.findIndex(x=>x.uid===card.uid);if(i>=0)return p.board.splice(i,1)[0]}
+function destroy(card){const p=G.p[card.owner];const c=removeFromBoard(card);if(!c)return;if(c.name==='白骨精'){p.deck.push(c);shuffle(p.deck);log('白骨精被消灭，放回拥有者牌组并重洗。')}else{p.discard.push(c);log(`${c.name}被消灭，进入${p.name}弃牌堆。`)}}
+function bounce(card){const p=G.p[card.owner];const c=removeFromBoard(card);if(c){c.dmg=0;c.attacked=false;p.hand.push(c);log(`${c.name}被吹回${p.name}手牌。`)}}
+function chooseTarget(msg,targets,cb){if(!targets.length){log(msg+'：没有合法目标。');return}pending={msg,targets:targets.map(x=>x.uid),cb,multi:false};log(msg);}
+function chooseMultiple(msg,targets,max,cb){if(!targets.length){log(msg+'：没有合法目标。');return}pending={msg,targets:targets.map(x=>x.uid),cb,multi:true,max,chosen:[]};log(msg+'；再次点击已选目标可取消，选满或点击结束回合前会自动结算。');}
+function targetClick(uid){const card=allBoard().find(x=>x.uid===uid);if(pending){if(!pending.targets.includes(uid))return;if(pending.multi){const k=pending.chosen.indexOf(uid); if(k>=0)pending.chosen.splice(k,1); else pending.chosen.push(uid); if(pending.chosen.length>=pending.max){const arr=pending.chosen.map(id=>allBoard().find(x=>x.uid===id)).filter(Boolean);const cb=pending.cb;pending=null;cb(arr)}render();return}else{const cb=pending.cb;pending=null;cb(card);render();return}}
+ if(card.owner===G.cur){selected=card;render();return}
+ if(selected)attack(selected,card)}
+function attack(att,def){if(!G||G.phase!=='main')return;const p=G.p[att.owner], o=G.p[1-att.owner];if(att.owner!==G.cur||att.attacked){log('该妖怪不能攻击。');return}if(def&&def.owner===att.owner)return;if(o.board.length&&(!def||def.owner!==o.idx)){log('对方有妖怪时，必须攻击妖怪。');return}if(!def){o.life-=att.star;att.attacked=true;log(`${att.name}直接攻击，${o.name}失去${att.star}点地盘生命。`);selected=null;checkWin();render();return}att.dmg+=def.star;def.dmg+=att.star;att.attacked=true;log(`${att.name}攻击${def.name}，双方同时造成伤害。`);if(def.dmg>=def.star)destroy(def);if(att.dmg>=att.star)destroy(att);selected=null;checkWin();render()}
+function autoAttackFace(){if(!G||G.phase!=='main')return;const p=cur(), o=opp();if(o.board.length){log('对方有妖怪，不能直攻。');return}p.board.filter(c=>!c.attacked).forEach(c=>attack(c,null));render()}
+function cardHTML(c,loc){const cls='card '+(loc==='board'?'battleCard ':'')+(selected&&selected.uid===c.uid?'selected ':'')+(c.attacked?'attacked ':'');return `<div class="${cls}" onclick="${loc==='hand'?`playCard(${c.owner},'${c.uid}')`:`targetClick('${c.uid}')`}"><div class="name">${c.name}</div><div class="meta">${c.star}星 / 费血伤${c.star}</div><div class="text">${c.text}</div>${loc==='board'?`<span class="badge">${c.star}</span>${c.dmg?`<span class="dmg">伤${c.dmg}</span>`:''}`:''}</div>`}
+function render(){if(!G)return;G.p.forEach((p,i)=>{el('p'+i+'Panel').classList.toggle('active',G.cur===i);el('p'+i+'Stats').innerHTML=`<span class="stat life">地盘生命 ${p.life}/${p.maxLife}</span><span class="stat energy">妖气 ${p.energy}</span><span class="stat">牌组 ${p.deck.length}</span><span class="stat">手牌 ${p.hand.length}</span><span class="stat">弃牌 ${p.discard.length}</span>`;el('p'+i+'Board').innerHTML=p.board.map(c=>cardHTML(c,'board')).join('');el('p'+i+'Hand').innerHTML=p.hand.map(c=>cardHTML(c,'hand')).join('');el('p'+i+'Discard').innerHTML=p.discard.slice(-5).map(c=>`<div class="card small"><div class="name">${c.name}</div><div class="meta">${c.star}星</div></div>`).join('')});el('turnInfo').innerHTML=`<span class="stat">当前：${cur().name}</span><span class="stat">阶段：${G.phase==='idle'?'待开始':'行动中'}</span>${pending?`<span class="stat warn">${pending.msg}</span>`:''}${G.winner?`<span class="stat ok">${G.winner.name}获胜</span>`:''}`;el('beginBtn').disabled=G.phase!=='idle'||G.winner;el('endBtn').disabled=G.phase==='idle'||G.winner}
+renderPicks();
+</script>
+</body>
+</html>
