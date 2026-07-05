@@ -1,0 +1,57 @@
+{
+  "schema": "cards.v1",
+  "project": "夕妖：抢地盘",
+  "version": "V1.2",
+  "purpose": "供网站卡牌图鉴、电子原型和规则展示读取的基础卡牌数据。此文件不是新的规则来源。",
+  "source_of_truth": [
+    "规则/V1.2-基础卡表.md"
+  ],
+  "generated_from": {
+    "file": "规则/V1.2-基础卡表.md",
+    "sha": "25ea25de37b819c9aa58cfddf950ec70c117d3f2"
+  },
+  "cards": [
+    {"id":"monster-xiaozuanfeng","name":"小钻风","category":"monster","count":4,"rank":5,"star":1,"type":"有名小妖","card_text":"查地盘牌库顶牌，可置顶或置底。","power_score":30,"lore_score":95,"rating":"A","status":"已审核","source_doc":"妖怪志/小钻风/小钻风.md"},
+    {"id":"monster-youlaiyouqu","name":"有来有去","category":"monster","count":4,"rank":5,"star":1,"type":"有名小妖","card_text":"抽1张牌，然后弃1张牌。","power_score":28,"lore_score":92,"rating":"A-","status":"已审核","source_doc":"妖怪志/有来有去/有来有去.md"},
+    {"id":"monster-jingxigui","name":"精细鬼","category":"monster","count":4,"rank":5,"star":1,"type":"有名小妖","card_text":"查公共牌库顶牌，可置顶或置底。","power_score":28,"lore_score":95,"rating":"A","status":"已审核","source_doc":"妖怪志/精细鬼/精细鬼.md"},
+    {"id":"monster-linglichong","name":"伶俐虫","category":"monster","count":4,"rank":5,"star":1,"type":"有名小妖","card_text":"随机查看一名玩家手牌中的1张。","power_score":26,"lore_score":92,"rating":"A-","status":"已审核","source_doc":"妖怪志/伶俐虫/伶俐虫.md"},
+    {"id":"monster-jiruhuo","name":"急如火","category":"monster","count":4,"rank":5,"star":1,"type":"有名小妖","card_text":"喊一名玩家；答应后各抽1张。","power_score":18,"lore_score":88,"rating":"A-","status":"已审核","source_doc":"妖怪志/急如火/急如火.md"},
+    {"id":"monster-kuairufeng","name":"快如风","category":"monster","count":4,"rank":5,"star":1,"type":"有名小妖","card_text":"将地盘牌库顶1张放到牌库底。","power_score":26,"lore_score":92,"rating":"A-","status":"已审核","source_doc":"妖怪志/快如风/快如风.md"},
+    {"id":"monster-yunliwu","name":"云里雾","category":"monster","count":4,"rank":4,"star":2,"type":"精英头目","card_text":"重洗地盘牌库。","power_score":38,"lore_score":92,"rating":"A","status":"已审核","source_doc":"妖怪志/云里雾/云里雾.md"},
+    {"id":"monster-wuliyun","name":"雾里云","category":"monster","count":4,"rank":4,"star":2,"type":"精英头目","card_text":"重洗公共牌库。","power_score":36,"lore_score":90,"rating":"A","status":"已审核","source_doc":"妖怪志/雾里云/雾里云.md"},
+    {"id":"monster-jinjiaodawang","name":"金角大王","category":"monster","count":2,"rank":3,"star":3,"type":"普通妖王","card_text":"查地盘牌库1张，任意放回。","power_score":60,"lore_score":82,"rating":"A-","status":"已审核","source_doc":"妖怪志/金角大王/金角大王.md"},
+    {"id":"monster-yinjiaodawang","name":"银角大王","category":"monster","count":2,"rank":3,"star":3,"type":"普通妖王","card_text":"查公共牌库顶3张，任意排序。","power_score":42,"lore_score":82,"rating":"A-","status":"已审核","source_doc":"妖怪志/银角大王/银角大王.md"},
+    {"id":"monster-baigujing","name":"白骨精","category":"monster","count":2,"rank":3,"star":3,"type":"普通妖王","card_text":"被消灭时，放回公共牌库并重洗。","power_score":0,"lore_score":100,"rating":"A","status":"已审核","source_doc":"妖怪志/白骨精/白骨精.md"},
+    {"id":"monster-yumianhuli","name":"玉面狐狸","category":"monster","count":2,"rank":3,"star":3,"type":"洞主","card_text":"让牛魔王驻守你的地盘1回合。","power_score":42,"lore_score":80,"rating":"B-","status":"已审核","source_doc":"妖怪志/玉面狐狸/玉面狐狸.md"},
+    {"id":"monster-jinbibaimaolaoshujing","name":"金鼻白毛老鼠精","category":"monster","count":2,"rank":3,"star":3,"type":"洞主","card_text":"选1个1星守军，加入你的地盘。","power_score":60,"lore_score":100,"rating":"A-","status":"已审核","source_doc":"妖怪志/金鼻白毛老鼠精/金鼻白毛老鼠精.md"},
+    {"id":"monster-huangpaoguai","name":"黄袍怪","category":"monster","count":2,"rank":3,"star":3,"type":"普通妖王","card_text":"选1个1星守军，加入你的手牌。","power_score":55,"lore_score":86,"rating":"B+","status":"已审核","source_doc":"妖怪志/黄袍怪/黄袍怪.md"},
+    {"id":"monster-tieshangongzhu","name":"铁扇公主","category":"monster","count":2,"rank":3,"star":3,"type":"洞主","card_text":"吹回任意1个守军。","power_score":64,"lore_score":84,"rating":"B+","status":"已审核","source_doc":"妖怪志/铁扇公主/铁扇公主.md"},
+    {"id":"monster-honghaier","name":"红孩儿","category":"monster","count":2,"rank":2,"star":4,"type":"强妖王","card_text":"消灭1块地盘中的所有1星守军。","power_score":74,"lore_score":100,"rating":"A","status":"已审核","source_doc":"妖怪志/红孩儿/红孩儿.md"},
+    {"id":"monster-huangfengguai","name":"黄风怪","category":"monster","count":2,"rank":2,"star":4,"type":"强妖王","card_text":"吹回1块地盘中，2个3星以下守军。","power_score":76,"lore_score":100,"rating":"A-","status":"已审核","source_doc":"妖怪志/黄风怪/黄风怪.md"},
+    {"id":"monster-qingshijing","name":"青狮精","category":"monster","count":2,"rank":2,"star":4,"type":"强妖王","card_text":"消灭1个4星以下守军。","power_score":78,"lore_score":100,"rating":"A","status":"已审核","source_doc":"妖怪志/青狮精/青狮精.md"},
+    {"id":"monster-niumowang","name":"牛魔王","category":"monster","count":1,"rank":1,"star":5,"type":"顶级妖王","card_text":"立即再打出1张妖怪牌。","power_score":68,"lore_score":100,"rating":"A-","status":"已审核","source_doc":"妖怪志/牛魔王/牛魔王.md"},
+    {"id":"monster-dapengjing","name":"大鹏精","category":"monster","count":1,"rank":1,"star":5,"type":"顶级妖王","card_text":"立即发动一次抢地盘。","power_score":86,"lore_score":100,"rating":"A","status":"已审核","source_doc":"妖怪志/大鹏精/大鹏精.md"},
+    {"id":"treasure-zijin-honghulu","name":"紫金红葫芦","category":"treasure","count":1,"type":"法宝","core_function":"收","card_text":"喊一名玩家名字；对方答应后，收走其1个守军到你的手牌。","power_score":45,"lore_score":100,"rating":"B+","status":"已审核","source_doc":"法宝志/紫金红葫芦/紫金红葫芦.md"},
+    {"id":"treasure-jingangzhuo","name":"金刚琢","category":"treasure","count":1,"type":"法宝","core_function":"破","card_text":"取消1次法宝效果。","power_score":88,"lore_score":100,"rating":"A","status":"已审核","source_doc":"法宝志/金刚琢/金刚琢.md"},
+    {"id":"treasure-huangjinsheng","name":"幌金绳","category":"treasure","count":1,"type":"法宝","core_function":"抓","card_text":"选择1个守军，加入你的手牌。","power_score":92,"lore_score":100,"rating":"A","status":"已审核","source_doc":"法宝志/幌金绳/幌金绳.md"},
+    {"id":"treasure-bajiaoshan","name":"芭蕉扇","category":"treasure","count":1,"type":"法宝","core_function":"吹","card_text":"吹回1块地盘中的所有守军。","power_score":100,"lore_score":100,"rating":"S","status":"已审核","source_doc":"法宝志/芭蕉扇/芭蕉扇.md"},
+    {"id":"territory-baiguling","name":"白骨岭","category":"territory","domain":"白骨","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-maigupo","name":"埋骨坡","category":"territory","domain":"白骨","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-luanzanggang","name":"乱葬岗","category":"territory","domain":"白骨","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-huoyanshan","name":"火焰山","category":"territory","domain":"火云","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-cuiyunshan","name":"翠云山","category":"territory","domain":"火云","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-bajiaodong","name":"芭蕉洞","category":"territory","domain":"火云","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-shituoling","name":"狮驼岭","category":"territory","domain":"狮驼","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-shituodong","name":"狮驼洞","category":"territory","domain":"狮驼","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-shituoguo","name":"狮驼国","category":"territory","domain":"狮驼","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-pansidong","name":"盘丝洞","category":"territory","domain":"盘丝","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-huanghuaguan","name":"黄花观","category":"territory","domain":"盘丝","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"},
+    {"id":"territory-zhuogouquan","name":"濯垢泉","category":"territory","domain":"盘丝","count":1,"type":"地盘","star":null,"skill_status":"当前无技能","rule_role":"控制同妖域 3 块地盘获胜"}
+  ],
+  "totals": {
+    "monster": 54,
+    "treasure": 4,
+    "territory": 12,
+    "all_physical_cards": 70
+  }
+}
