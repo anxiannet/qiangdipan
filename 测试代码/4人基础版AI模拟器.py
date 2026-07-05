@@ -6,13 +6,21 @@
 用途：
 - 验证基础版4人规则是否闭环。
 - 对比不同公共牌库复制数方案。
-- 当前内置两个方案：
-  1. current_58：当前V1.2基础公共牌库，58张。
-  2. reduced_42：1星、2星每种改为2张，公共牌库42张。
+- 对比不同AI行为模型对游戏收束、地盘回流、空库结算的影响。
+
+内置牌库 preset：
+1. current_58：当前V1.2基础公共牌库，58张。
+2. reduced_42：1星、2星每种改为2张，公共牌库42张。
+
+内置AI：
+1. aggressive：压力测试AI。能抢就抢，用于放大互抢、回流、空库风险。
+2. human_like：真人近似AI。目标导向，避免无意义互抢，避免轻易掏空自己的地盘。
 
 运行：
-python3 测试代码/4人基础版AI模拟器.py --preset reduced_42 --games 3000 --seed 20260705
-python3 测试代码/4人基础版AI模拟器.py --preset current_58 --games 3000 --seed 20260705
+python3 测试代码/4人基础版AI模拟器.py --preset current_58 --ai aggressive --games 3000 --seed 20260705
+python3 测试代码/4人基础版AI模拟器.py --preset current_58 --ai human_like --games 3000 --seed 20260705
+python3 测试代码/4人基础版AI模拟器.py --preset reduced_42 --ai aggressive --games 3000 --seed 20260705
+python3 测试代码/4人基础版AI模拟器.py --preset reduced_42 --ai human_like --games 3000 --seed 20260705
 
 注意：
 本代码是规则验证型AI，不是强竞技AI。
@@ -67,7 +75,10 @@ class GameResult:
 
 
 class Game:
-    def __init__(self, preset: str, seed: int):
+    def __init__(self, preset: str, ai: str, seed: int):
+        if ai not in ("aggressive", "human_like"):
+            raise ValueError(f"未知AI: {ai}")
+        self.ai = ai
         self.rng = random.Random(seed)
         self.players = list(range(4))
         self.turn_index = 0
@@ -112,9 +123,6 @@ class Game:
             out.extend(ts)
         return out
 
-    def player_territories(self, player: int) -> List[Territory]:
-        return self.owned[player]
-
     def check_winner(self) -> Optional[int]:
         for p in self.players:
             domains: Dict[str, int] = {}
@@ -152,7 +160,6 @@ class Game:
         self.return_empty_owned_territories()
 
     def resolve_enter_skill(self, player: int, card: Card) -> None:
-        # 验证型AI只实现会显著影响场面的技能；信息类技能按低影响处理。
         enemies = [p for p in self.players if p != player]
         enemy_territories = [t for p in enemies for t in self.owned[p]]
         own_territories = self.owned[player]
@@ -161,7 +168,6 @@ class Game:
             self.draw(player, 1)
             self.discard_lowest(player)
         elif card.name == "急如火":
-            # 默认答应概率50%。双方各抽1张。
             if self.rng.random() < 0.5:
                 target = self.rng.choice(enemies)
                 self.draw(player, 1)
@@ -176,7 +182,6 @@ class Game:
         elif card.name == "白骨精":
             pass
         elif card.name == "玉面狐狸":
-            # 已确认：牛魔王来源为场上已有牛魔王守军。
             bulls = [g for t in self.all_territories() for g in t.guards if g.name == "牛魔王"]
             if bulls and own_territories:
                 target_t = max(own_territories, key=lambda t: domain_need_score(player, t, self.owned))
@@ -297,11 +302,61 @@ class Game:
                 self.discard.append(card)
                 self.return_empty_owned_territories()
                 return True
-        # 金刚琢为反制牌，验证型AI不主动使用。
         return False
 
-    def can_capture(self, attackers: List[Card], defenders: List[Card]) -> bool:
-        return battle_outcome(attackers, defenders)[0]
+    def recruit_best(self, player: int) -> bool:
+        monster = self.best_monster_in_hand(player)
+        target = self.best_place_for_guard(player)
+        if monster and target:
+            self.hands[player].remove(monster)
+            self.place_guard(player, target, monster)
+            return True
+        return False
+
+    def should_recruit_before_attack(self, player: int) -> bool:
+        territories = self.owned[player]
+        if not territories:
+            return True
+        guard_count = sum(len(t.guards) for t in territories)
+        if guard_count <= len(territories):
+            return True
+        domains: Dict[str, int] = {}
+        for t in territories:
+            domains[t.domain] = domains.get(t.domain, 0) + 1
+        has_two_domain = any(v >= 2 for v in domains.values())
+        if has_two_domain and any(len(t.guards) < 2 for t in territories):
+            return True
+        return False
+
+    def attack_score(self, player: int, src: Territory, dst: Territory, attackers: List[Card], survivors: List[Card]) -> int:
+        own_same_before = sum(1 for t in self.owned[player] if t.domain == dst.domain)
+        direct_win = own_same_before >= 2
+        old_owner = dst.owner
+        block_threat = False
+        if old_owner is not None and old_owner != player:
+            enemy_same = sum(1 for t in self.owned[old_owner] if t.domain == dst.domain)
+            block_threat = enemy_same >= 2
+
+        source_empty = len(src.guards) == len(attackers)
+        attacker_stars = sum(g.star for g in attackers)
+        defender_stars = sum(g.star for g in dst.guards)
+        score = 0
+        score += own_same_before * 30
+        score += defender_stars * 3
+        score += len(survivors) * 6
+        score -= attacker_stars * 2
+
+        if direct_win:
+            score += 120
+        if block_threat:
+            score += 80
+        if source_empty:
+            score -= 45
+        if source_empty and (direct_win or block_threat):
+            score += 35
+        if dst.domain not in [t.domain for t in self.owned[player]]:
+            score -= 12
+        return score
 
     def try_attack(self, player: int) -> bool:
         own = [t for t in self.owned[player] if t.guards]
@@ -309,23 +364,25 @@ class Game:
         if not own or not targets:
             return False
 
-        best: Optional[Tuple[int, Territory, Territory, List[Card]]] = None
+        best: Optional[Tuple[int, Territory, Territory, List[Card], List[Card], List[Card]]] = None
         for src in own:
             guards = list(src.guards)
             for r in range(1, min(3, len(guards)) + 1):
                 for attackers in itertools.combinations(guards, r):
                     for dst in targets:
-                        ok, survivors, _ = battle_outcome(list(attackers), list(dst.guards))
+                        ok, survivors, dead_attackers = battle_outcome(list(attackers), list(dst.guards))
                         if ok and survivors:
-                            score = domain_need_score(player, dst, self.owned) * 10 + sum(g.star for g in dst.guards) - sum(g.star for g in attackers)
+                            if self.ai == "aggressive":
+                                score = domain_need_score(player, dst, self.owned) * 10 + sum(g.star for g in dst.guards) - sum(g.star for g in attackers)
+                            else:
+                                score = self.attack_score(player, src, dst, list(attackers), survivors)
                             if best is None or score > best[0]:
-                                best = (score, src, dst, list(attackers))
+                                best = (score, src, dst, list(attackers), survivors, dead_attackers)
         if best is None:
             return False
 
-        _, src, dst, attackers = best
-        ok, survivors, dead_attackers = battle_outcome(list(attackers), list(dst.guards))
-        if not ok:
+        score, src, dst, attackers, survivors, dead_attackers = best
+        if self.ai == "human_like" and score < 30:
             return False
 
         for g in attackers:
@@ -357,24 +414,27 @@ class Game:
         progress_before = self.snapshot_progress()
 
         self.draw(player, 1)
+        acted = False
 
-        # 1. 若能通过抢地盘直接推进胜利，优先抢。
-        acted = self.try_attack(player)
-
-        # 2. 否则使用强法宝。
-        if not acted:
-            treasure = self.best_treasure_in_hand(player)
-            if treasure and card_priority(treasure.name) >= 80:
-                acted = self.use_treasure(player, treasure)
-
-        # 3. 否则招兵。
-        if not acted:
-            monster = self.best_monster_in_hand(player)
-            target = self.best_place_for_guard(player)
-            if monster and target:
-                self.hands[player].remove(monster)
-                self.place_guard(player, target, monster)
-                acted = True
+        if self.ai == "aggressive":
+            acted = self.try_attack(player)
+            if not acted:
+                treasure = self.best_treasure_in_hand(player)
+                if treasure and card_priority(treasure.name) >= 80:
+                    acted = self.use_treasure(player, treasure)
+            if not acted:
+                acted = self.recruit_best(player)
+        else:
+            if self.should_recruit_before_attack(player):
+                acted = self.recruit_best(player)
+            if not acted:
+                acted = self.try_attack(player)
+            if not acted:
+                treasure = self.best_treasure_in_hand(player)
+                if treasure and card_priority(treasure.name) >= 80:
+                    acted = self.use_treasure(player, treasure)
+            if not acted:
+                acted = self.recruit_best(player)
 
         winner = self.check_winner()
         if winner is not None:
@@ -413,7 +473,6 @@ class Game:
 
 
 def battle_outcome(attackers: List[Card], defenders: List[Card]) -> Tuple[bool, List[Card], List[Card]]:
-    # 攻方AI：先用刚好能造成累计击杀的低价值单位消耗守方高星。
     defenders_hp = {id(g): g.star for g in defenders}
     live_def = list(defenders)
     live_atk = list(attackers)
@@ -485,10 +544,10 @@ def domain_need_score(player: int, territory: Territory, owned: Dict[int, List[T
     return have * 10 + (3 - len(territory.guards))
 
 
-def run_batch(preset: str, games: int, seed: int) -> Dict[str, object]:
+def run_batch(preset: str, ai: str, games: int, seed: int) -> Dict[str, object]:
     results: List[GameResult] = []
     for i in range(games):
-        g = Game(preset, seed + i)
+        g = Game(preset, ai, seed + i)
         result = None
         while result is None:
             result = g.take_turn()
@@ -506,6 +565,7 @@ def run_batch(preset: str, games: int, seed: int) -> Dict[str, object]:
 
     return {
         "preset": preset,
+        "ai": ai,
         "games": games,
         "seed": seed,
         "winners": winners,
@@ -524,11 +584,12 @@ def run_batch(preset: str, games: int, seed: int) -> Dict[str, object]:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--preset", choices=["current_58", "reduced_42"], default="reduced_42")
+    parser.add_argument("--ai", choices=["aggressive", "human_like"], default="aggressive")
     parser.add_argument("--games", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=20260705)
     args = parser.parse_args()
 
-    summary = run_batch(args.preset, args.games, args.seed)
+    summary = run_batch(args.preset, args.ai, args.games, args.seed)
     print("=== 4人基础版AI模拟结果 ===")
     for key, value in summary.items():
         print(f"{key}: {value}")
