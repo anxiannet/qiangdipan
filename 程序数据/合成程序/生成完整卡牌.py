@@ -45,6 +45,7 @@ BAIGU_BLEED_BG = (16, 36, 61)
 BAIGU_LAYOUT = {
     "frame_box": (SAFE, SAFE, 673, 969),
     "art_clip": (118, 150, 579, 830),
+    "main_visual_safe": (143, 300, 454, 540),
     "star_positions": [(162, 230), (226, 230), (290, 230)],
     "star_size": (56, 56),
     "nameplate": (570, 250, 88, 330),
@@ -73,6 +74,15 @@ BAIGU_SOURCE_ASSETS = {
     "star_1": "baigu_star_1_silver_chromakey_A.png",
     "star_2": "baigu_star_2_purple_chromakey_B.png",
     "star_3": "baigu_star_3_gold_chromakey_B.png",
+}
+
+CARD_ART_LAYOUTS = {
+    "白骨精": {
+        "subject_box": (270, 560, 520, 675),
+        "target_box": BAIGU_LAYOUT["main_visual_safe"],
+        "offset": (50, 0),
+        "scale": 1.0,
+    },
 }
 
 FABAO_LAYOUT = {
@@ -334,6 +344,29 @@ def cover_crop(
     return resized.crop((left, top, left + target_w, top + target_h))
 
 
+def subject_aligned_crop(
+    img: Image.Image,
+    size: tuple[int, int],
+    art_origin: tuple[int, int],
+    subject_box: tuple[int, int, int, int],
+    target_box: tuple[int, int, int, int],
+    offset: tuple[int, int] = (0, 0),
+    scale_adjust: float = 1.0,
+) -> Image.Image:
+    target_w, target_h = size
+    subject_x, subject_y, subject_w, subject_h = subject_box
+    target_x, target_y, target_subject_w, target_subject_h = target_box
+    local_target_x = target_x - art_origin[0] + offset[0]
+    local_target_y = target_y - art_origin[1] + offset[1]
+    scale = min(target_subject_w / subject_w, target_subject_h / subject_h) * scale_adjust
+    resized = img.resize((round(img.width * scale), round(img.height * scale)), Image.Resampling.LANCZOS)
+    left = round(subject_x * scale - local_target_x)
+    top = round(subject_y * scale - local_target_y)
+    left = max(0, min(left, max(0, resized.width - target_w)))
+    top = max(0, min(top, max(0, resized.height - target_h)))
+    return resized.crop((left, top, left + target_w, top + target_h))
+
+
 def resolve_art_path(card: dict) -> Path:
     raw_path = Path(card["art_path"])
     candidates = [
@@ -435,7 +468,16 @@ def paste_star_with_outline(base: Image.Image, asset: Image.Image, box: tuple[in
 
 def baigu_frame_for_stars(stars: int, box: tuple[int, int, int, int]) -> Image.Image:
     _, _, width, height = box
-    return load_baigu_asset(f"frame_{stars}").resize((width, height), Image.Resampling.LANCZOS)
+    asset_stars = max(1, min(stars, 3))
+    return load_baigu_asset(f"frame_{asset_stars}").resize((width, height), Image.Resampling.LANCZOS)
+
+
+def baigu_star_positions(stars: int) -> list[tuple[int, int]]:
+    if stars <= len(BAIGU_LAYOUT["star_positions"]):
+        return BAIGU_LAYOUT["star_positions"][:stars]
+    start_x, y = BAIGU_LAYOUT["star_positions"][0]
+    gap = BAIGU_LAYOUT["star_positions"][1][0] - BAIGU_LAYOUT["star_positions"][0][0]
+    return [(start_x + i * gap, y) for i in range(stars)]
 
 
 def make_baigu_skillbar(box: tuple[int, int, int, int]) -> Image.Image:
@@ -497,21 +539,12 @@ def draw_bold_skill_text(draw: ImageDraw.ImageDraw, text: str, box_xywh: tuple[i
     size = 30
     while size >= 24:
         fnt = font(size)
-        bbox = draw.textbbox((0, 0), display, font=fnt, stroke_width=3)
-        if bbox[2] - bbox[0] <= w and bbox[3] - bbox[1] <= h:
+        text_w, text_h = skill_text_line_size(draw, display, fnt, stroke_width=3)
+        if text_w <= w and text_h <= h:
             break
         size -= 1
     cx = x + w / 2
     cy = y + h / 2 - 10
-    draw_skill_text_line(
-        draw,
-        display,
-        (cx, cy + 1),
-        fnt,
-        (0, 0, 0),
-        stroke_width=3,
-        stroke_fill=(0, 0, 0),
-    )
     draw_skill_text_line(
         draw,
         display,
@@ -521,10 +554,24 @@ def draw_bold_skill_text(draw: ImageDraw.ImageDraw, text: str, box_xywh: tuple[i
         stroke_width=3,
         stroke_fill=(30, 26, 24),
     )
-    draw_skill_text_line(draw, display, (cx + 0.6, cy), fnt, (243, 238, 228))
 
 
 SKILL_LOW_PUNCTUATION = set("，。；：、！？,.!?")
+
+
+def skill_text_line_size(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    fnt: ImageFont.ImageFont,
+    stroke_width: int = 0,
+) -> tuple[int, int]:
+    width = 0
+    height = 0
+    for char in text:
+        bbox = draw.textbbox((0, 0), char, font=fnt, stroke_width=stroke_width)
+        width += bbox[2] - bbox[0]
+        height = max(height, bbox[3] - bbox[1])
+    return width, height
 
 
 def draw_skill_text_line(
@@ -693,13 +740,21 @@ def draw_baigu_monster_front(card: dict) -> tuple[Image.Image, bool]:
         art, _ = load_art(card, xywh_to_box(art_box))
     else:
         art = Image.open(art_path).convert("RGB")
-        if card["name"] == "白骨精":
-            art_focus = (0.50, 0.45)
-            art_zoom = 1.40
+        art_layout = CARD_ART_LAYOUTS.get(card["name"])
+        if art_layout:
+            art = subject_aligned_crop(
+                art,
+                (art_box[2], art_box[3]),
+                (art_box[0], art_box[1]),
+                art_layout["subject_box"],
+                art_layout["target_box"],
+                art_layout.get("offset", (0, 0)),
+                art_layout.get("scale", 1.0),
+            )
         else:
             art_focus = (0.52, 0.43)
             art_zoom = 1.0
-        art = cover_crop(art, (art_box[2], art_box[3]), focus=art_focus, zoom=art_zoom)
+            art = cover_crop(art, (art_box[2], art_box[3]), focus=art_focus, zoom=art_zoom)
         art = ImageEnhance.Color(art).enhance(0.98)
         art = ImageEnhance.Contrast(art).enhance(1.0)
     art_rgba = art.convert("RGBA")
@@ -717,13 +772,13 @@ def draw_baigu_monster_front(card: dict) -> tuple[Image.Image, bool]:
     img.alpha_composite(frame, (BAIGU_LAYOUT["frame_box"][0], BAIGU_LAYOUT["frame_box"][1]))
     paste_fit_rgba(img, load_baigu_asset("nameplate"), BAIGU_LAYOUT["nameplate"])
 
-    star_asset = load_baigu_asset(f"star_{stars}")
+    star_asset = load_baigu_asset(f"star_{max(1, min(stars, 3))}")
     star_w, star_h = BAIGU_LAYOUT["star_size"]
-    for x, y in BAIGU_LAYOUT["star_positions"][:stars]:
+    for x, y in baigu_star_positions(stars):
         paste_star_with_outline(img, star_asset, (x, y, star_w, star_h))
 
     draw = ImageDraw.Draw(img)
-    name_color = (244, 227, 178) if stars == 3 else (247, 244, 238)
+    name_color = (244, 227, 178) if stars >= 3 else (247, 244, 238)
     draw_vertical_text(draw, card["name"], BAIGU_LAYOUT["name_safe"], name_color, (42, 33, 29))
     draw_bold_skill_text(draw, card.get("skill_text", ""), BAIGU_LAYOUT["skill_safe"])
     return img.convert("RGB"), missing

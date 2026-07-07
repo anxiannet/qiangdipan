@@ -51,27 +51,33 @@ def parse_targets() -> list[dict[str, Any]]:
     targets: list[dict[str, Any]] = []
     for raw in text.splitlines():
         line = raw.strip()
-        if line.startswith("## 五、1 星妖怪卡表"):
+        if line.startswith("## 六、1 星妖怪卡表"):
             section = "monster"
             continue
-        if line.startswith("## 六、2 星妖怪卡表"):
+        if line.startswith("## 七、2 星妖怪卡表"):
             section = "monster"
             continue
-        if line.startswith("## 七、3 星妖怪卡表"):
+        if line.startswith("## 八、3 星妖怪卡表"):
             section = "monster"
             continue
-        if line.startswith("## 八、法宝卡表"):
+        if line.startswith("## 九、4 星妖怪卡表"):
+            section = "monster"
+            continue
+        if line.startswith("## 十、5 星妖怪卡表"):
+            section = "monster"
+            continue
+        if line.startswith("## 十一、法宝卡表"):
             section = "artifact"
             continue
-        if line.startswith("## 九、"):
+        if line.startswith("## 十二、"):
             section = None
             continue
         if section is None or not line.startswith("|") or "---" in line or "名称" in line:
             continue
 
         cells = pipe_cells(line)
-        if section == "monster" and len(cells) >= 12:
-            name, count, tier, stars, power, type_name, _, skill_text, skill_score, lore_score, rating, review = cells[:12]
+        if section == "monster" and len(cells) >= 11:
+            name, count, tier, stars, type_name, _, skill_text, skill_score, lore_score, rating, review = cells[:11]
             if review == "已审核" and skill_text != "待设计":
                 targets.append(
                     {
@@ -79,7 +85,7 @@ def parse_targets() -> list[dict[str, Any]]:
                         "count": int(count),
                         "tier": int(tier),
                         "stars": int(stars),
-                        "power": int(power),
+                        "power": 0,
                         "type_name": type_name,
                         "kind": "妖怪",
                         "skill_text": skill_text,

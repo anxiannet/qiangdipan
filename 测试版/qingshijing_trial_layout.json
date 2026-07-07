@@ -1,0 +1,126 @@
+{
+  "card_id": "qingshijing_trial",
+  "name": "青狮精",
+  "version": "trial_frame_approved_2026-07-01",
+  "status": "frame_approved",
+  "print": {
+    "canvas": {
+      "width": 815,
+      "height": 1110,
+      "dpi": 300
+    },
+    "trim": {
+      "x": 36,
+      "y": 36,
+      "width": 744,
+      "height": 1039
+    },
+    "safe_frame": {
+      "x": 71,
+      "y": 71,
+      "width": 673,
+      "height": 969
+    },
+    "bleed_background_rgb": [
+      16,
+      36,
+      61
+    ]
+  },
+  "approved_resources": {
+    "frame_rgb": "测试版/qingshijing-frame-approved-673x969.png",
+    "frame_transparent": "测试版/qingshijing-frame-approved-673x969-transparent.png",
+    "star_trimmed": "测试版/star-approved-48x48.png",
+    "approved_print": "资源/审核定稿/青狮精_试玩版/青狮精_试玩版_标准印刷版_边框通过_815x1110.png",
+    "approved_audit": "资源/审核定稿/青狮精_试玩版/青狮精_试玩版_边框通过_审核辅助线_815x1110.png"
+  },
+  "trial_folder_locked_resources": {
+    "data": "测试版/青狮精_测试版_固化数据.json",
+    "frame_rgb": "测试版/qingshijing-frame-approved-673x969.png",
+    "frame_transparent": "测试版/qingshijing-frame-approved-673x969-transparent.png",
+    "star_trimmed": "测试版/star-approved-48x48.png",
+    "background": "测试版/qingshijing-background.png",
+    "pure_illustration_reference": "测试版/青狮精_试玩版_纯插画_zhanshanweiwang.png",
+    "safe_frame_preview_5star": "测试版/card-safe-frame-5star-test-star48-gap0-y24-673x969.png",
+    "print_preview_5star": "测试版/print-5star-test-star48-gap0-y24-815x1110.png",
+    "audit_preview_5star": "测试版/audit-5star-test-star48-gap0-y24-815x1110.png"
+  },
+  "source_frame_processing": {
+    "source": "/Users/weijie/Downloads/9f32bff2-5ae3-4f59-9877-bfcfb4ba4155.png",
+    "source_size": {
+      "width": 1024,
+      "height": 1536
+    },
+    "non_green_bbox": {
+      "x": 13,
+      "y": 20,
+      "width": 1000,
+      "height": 1505
+    },
+    "trimmed_target": {
+      "width": 673,
+      "height": 969
+    },
+    "chroma_key_note": "Green placeholder removed before resource approval."
+  },
+  "art_window": {
+    "x": 31,
+    "y": 88,
+    "right": 641,
+    "bottom": 770,
+    "rule": "Background image is clipped to this window and must not extend under the frame or outside the frame."
+  },
+  "stars": {
+    "count": 4,
+    "trimmed_source_size": {
+      "width": 78,
+      "height": 79
+    },
+    "display_size": {
+      "width": 54,
+      "height": 55
+    },
+    "visual_gap_px": 5,
+    "safe_frame_positions_x": [
+      221,
+      280,
+      339,
+      398
+    ],
+    "safe_frame_y": 34,
+    "note": "Gap is measured between visible star edges after trimming source padding, not by the original image bounding box."
+  },
+  "star_slot_capacity_test_5star": {
+    "count": 5,
+    "display_size": {
+      "width": 48,
+      "height": 48
+    },
+    "visual_gap_px": 0,
+    "safe_frame_positions_x": [
+      216,
+      264,
+      312,
+      360,
+      408
+    ],
+    "safe_frame_y": 24,
+    "total_visible_width": 240,
+    "outline_boxes": false,
+    "status": "locked_for_review",
+    "note": "Capacity test for five visible 48x48 stars with 0px visual gap. Actual Qing Shi Jing gameplay data remains four stars unless rules change."
+  },
+  "text": {
+    "name": "青狮精",
+    "skill": "消灭1个3星或以下守军。"
+  },
+  "review": {
+    "frame": "approved",
+    "approved_at": "2026-07-01",
+    "notes": [
+      "Frame source padding removed and resized to fill the 673x969 safe frame.",
+      "Background is clipped inside the frame window.",
+      "Stars use trimmed visible bounds with 5px visual spacing."
+    ]
+  }
+}
