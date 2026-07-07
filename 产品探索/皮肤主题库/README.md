@@ -40,21 +40,21 @@
 | 04 | 黑区猎人 | Black Zone Hunters | 高危撤离、唯一悬赏、猎人团对抗 |
 | 05 | 黑区回声 | Black Echo | 记忆回声、真相回收、高危撤离 |
 | 06 | 黑区开拓者 | Zone Claimers | 黑区据点、资源控制、安全屋幻想 |
-| 07 | 零权限 | Zero Access | 系统弃民、权限节点、Root Access 夺权 |
+| 07 | 归零者 | ZERO ACCESS | 系统弃民、权限节点、Root Access 夺权 |
 
 ---
 
 ## 当前推荐优先级
 
 ```text
-第一优先：零权限 / Zero Access
+第一优先：归零者 / ZERO ACCESS
 第二优先：裂境前线 / Riftfront
 第三优先：裂境灵伴 / Riftbound
 ```
 
 原因：
 
-- `零权限`的玩家目标最直接：从零权限夺取 Root Access。
+- `归零者`的玩家目标最直接：从零权限夺取 Root Access。
 - `裂境前线`视觉气质较强，适合东方未来边境题材。
 - `裂境灵伴`更接近宠物收集与家庭市场，但需要严格避开宝可梦表达资产。
 
