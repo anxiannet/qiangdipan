@@ -65,10 +65,12 @@ export function PageHero({
 }) {
   return (
     <section className="page-hero">
-      <p className="eyebrow">{eyebrow}</p>
-      <h1>{title}</h1>
-      <div className="hero-copy">{children}</div>
-      {actions ? <LinkRow items={actions} /> : null}
+      <div className="page-hero-content">
+        <p className="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+        <div className="hero-copy">{children}</div>
+        {actions ? <LinkRow items={actions} /> : null}
+      </div>
     </section>
   );
 }
