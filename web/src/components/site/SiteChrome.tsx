@@ -18,6 +18,11 @@ export function SiteHeader() {
           </Link>
         ))}
       </nav>
+      <span className="nav-menu-mark" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </span>
     </header>
   );
 }
