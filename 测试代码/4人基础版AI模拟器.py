@@ -5,6 +5,7 @@
 
 适用规则版本：V1.3
 当前同步卡表版本：V1.3-卡表-029
+核心规则来源：规则/V1.3-核心规则.md
 
 用途：
 - 验证当前标准版40张牌在2~4人局中的规则闭环与收束情况。
@@ -13,7 +14,7 @@
 
 说明：
 - 本模拟器是规则验证型AI，不代表真人最优策略。
-- 延续旧测试代码的“每人起始5张牌”测试口径。
+- 每人起始5张、每回合抽1张、手牌上限7张，均按V1.3核心规则执行。
 - 喊名类效果使用概率模型：human_like 35%，aggressive 50%。
 - 伶俐虫的信息收益不直接改变牌区，因此只按1星守军处理。
 
@@ -104,6 +105,8 @@ class Game:
         self.no_progress_round = 0
         self.deck_empty_once = False
         self.center_size = center_size
+        self.played_public_card_this_turn = False
+        self.control_changed_this_turn = False
 
         for p in self.players:
             self.draw(p, 5)
@@ -150,6 +153,7 @@ class Game:
                     self.territory_deck.append(territory)
                     self.rng.shuffle(self.territory_deck)
                     self.territory_returns += 1
+                    self.control_changed_this_turn = True
                     changed = True
             self.refill_center()
 
@@ -161,6 +165,7 @@ class Game:
                 self.center.remove(territory)
             territory.owner = player
             self.owned[player].append(territory)
+            self.control_changed_this_turn = True
             self.refill_center()
         territory.guards.append(card)
         card.owner = player
@@ -199,13 +204,17 @@ class Game:
                 self.draw(player, 1)
 
         elif card.name == "急如火":
-            if enemies and self.rng.random() < self.answer_probability():
-                target = self.rng.choice(enemies)
-                if self.hands[player] and self.hands[target]:
-                    self.discard_lowest(player)
-                    self.discard_lowest(target)
-                    self.draw(player, 1)
-                    self.draw(target, 1)
+            valid = [p for p in enemies if self.hands[p]]
+            if valid and self.hands[player] and self.rng.random() < self.answer_probability():
+                target = self.rng.choice(valid)
+                own_card = min(self.hands[player], key=lambda c: (c.star, card_priority(c.name)))
+                target_card = min(self.hands[target], key=lambda c: (c.star, card_priority(c.name)))
+                self.hands[player].remove(own_card)
+                self.hands[target].remove(target_card)
+                own_card.owner = target
+                target_card.owner = player
+                self.hands[target].append(own_card)
+                self.hands[player].append(target_card)
 
         elif card.name == "快如风":
             if enemies and self.rng.random() < self.answer_probability():
@@ -300,6 +309,7 @@ class Game:
             destination = self.best_place_for_guard(player)
             if extra is not None and destination is not None:
                 self.hands[player].remove(extra)
+                self.played_public_card_this_turn = True
                 self.place_guard(player, destination, extra, trigger_skill=True)
 
         elif card.name == "大鹏精":
@@ -393,6 +403,7 @@ class Game:
         self.hands[target_player].remove(counter)
         counter.owner = None
         self.discard.append(counter)
+        self.played_public_card_this_turn = True
         return True
 
     def use_treasure(self, player: int, card: Card) -> bool:
@@ -416,6 +427,7 @@ class Game:
             self.hands[player].remove(card)
             card.owner = None
             self.discard.append(card)
+            self.played_public_card_this_turn = True
             return True
 
         if card.name == "幌金绳":
@@ -427,6 +439,7 @@ class Game:
             self.hands[player].remove(card)
             card.owner = None
             self.discard.append(card)
+            self.played_public_card_this_turn = True
             if target_player is not None and self.consume_jingangzhuo(target_player):
                 return True
             src.guards.remove(guard)
@@ -455,6 +468,7 @@ class Game:
             self.hands[player].remove(card)
             card.owner = None
             self.discard.append(card)
+            self.played_public_card_this_turn = True
             if self.rng.random() >= self.answer_probability():
                 return True
             if self.consume_jingangzhuo(target_player):
@@ -481,6 +495,7 @@ class Game:
         if monster is None or territory is None:
             return False
         self.hands[player].remove(monster)
+        self.played_public_card_this_turn = True
         self.place_guard(player, territory, monster)
         return True
 
@@ -575,6 +590,7 @@ class Game:
             guard.owner = player
         self.owned[player].append(target)
         self.successful_attacks += 1
+        self.control_changed_this_turn = True
         self.return_empty_owned_territories()
         return True
 
@@ -586,7 +602,8 @@ class Game:
         player = self.turn_index % len(self.players)
         self.turn_index += 1
         self.turns += 1
-        before = self.snapshot_progress()
+        self.played_public_card_this_turn = False
+        self.control_changed_this_turn = False
 
         self.draw(player, 1)
         acted = False
@@ -627,8 +644,12 @@ class Game:
             )
 
         if not self.deck:
-            after = self.snapshot_progress()
-            self.no_progress_round = self.no_progress_round + 1 if after == before else 0
+            no_card_played = not self.played_public_card_this_turn
+            no_control_change = not self.control_changed_this_turn
+            if no_card_played and no_control_change:
+                self.no_progress_round += 1
+            else:
+                self.no_progress_round = 0
             if self.no_progress_round >= len(self.players):
                 winner = self.settlement_winner()
                 return GameResult(
@@ -654,24 +675,6 @@ class Game:
                 False,
             )
         return None
-
-    def snapshot_progress(self) -> Tuple:
-        return tuple(
-            (
-                player,
-                tuple(
-                    sorted(
-                        (
-                            territory.name,
-                            territory.protected,
-                            tuple(guard.name for guard in territory.guards),
-                        )
-                        for territory in self.owned[player]
-                    )
-                ),
-            )
-            for player in self.players
-        )
 
     def settlement_winner(self) -> Optional[int]:
         scores = []
