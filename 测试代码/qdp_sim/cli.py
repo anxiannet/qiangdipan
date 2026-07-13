@@ -20,6 +20,12 @@ def build_parser() -> argparse.ArgumentParser:
             "aggressive为旧参数兼容别名。"
         ),
     )
+    parser.add_argument(
+        "--deck",
+        choices=["standard", "fire_cloud"],
+        default="standard",
+        help="standard为40张标准版；fire_cloud为标准版+火云再起50张牌库。",
+    )
     parser.add_argument("--games", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=20260713)
     parser.add_argument("--json", action="store_true")
@@ -35,6 +41,7 @@ def main() -> None:
         args.center_size,
         args.games,
         args.seed,
+        args.deck,
     )
     print(
         json.dumps(summary, ensure_ascii=False, indent=2)
