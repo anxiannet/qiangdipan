@@ -4,8 +4,9 @@ from statistics import mean, median
 from typing import Dict, List
 
 from .expansion import EXPANSION_NAME
+from .instrumented import EXPANSION_CARDS, InstrumentedFireCloudGame
 from .models import GameResult
-from .rules_030 import FireCloud030Game, Standard030Game
+from .rules_030 import Standard030Game
 
 
 def normalize_ai(ai: str) -> tuple[str, str]:
@@ -20,7 +21,7 @@ def normalize_deck(deck: str) -> tuple[type, str, str, int]:
     if deck == "standard":
         return Standard030Game, "标准版", "V1.3-卡表-030", 40
     if deck == "fire_cloud":
-        return FireCloud030Game, f"标准版+{EXPANSION_NAME}", "V1.3-卡表-030", 50
+        return InstrumentedFireCloudGame, f"标准版+{EXPANSION_NAME}", "V1.3-卡表-030", 50
     raise ValueError(f"未知牌组: {deck}")
 
 
@@ -39,12 +40,37 @@ def run_batch(
     internal_ai, report_ai = normalize_ai(ai)
     game_class, deck_name, card_table_version, deck_size = normalize_deck(deck)
     results: List[GameResult] = []
+
+    expansion_totals = {
+        name: {
+            "plays": 0,
+            "triggers": 0,
+            "cards_drawn": 0,
+            "cards_discarded": 0,
+            "guards_removed": 0,
+            "player_game_exposures": 0,
+            "wins_when_played": 0,
+        }
+        for name in EXPANSION_CARDS
+    }
+
     for index in range(games):
         game = game_class(internal_ai, players_count, domain_count, center_size, seed + index)
         result = None
         while result is None:
             result = game.take_turn()
         results.append(result)
+
+        if deck == "fire_cloud":
+            for name in EXPANSION_CARDS:
+                source = game.expansion_stats[name]
+                target = expansion_totals[name]
+                for key in ("plays", "triggers", "cards_drawn", "cards_discarded", "guards_removed"):
+                    target[key] += source[key]
+                players = game.expansion_played_by_player[name]
+                target["player_game_exposures"] += len(players)
+                if result.winner is not None and result.winner in players:
+                    target["wins_when_played"] += 1
 
     reasons: Dict[str, int] = {}
     for result in results:
@@ -58,7 +84,7 @@ def run_batch(
     settlement_wins = reasons.get("公共牌库耗尽结算", 0)
     settlement_draws = reasons.get("平局结算", 0)
 
-    return {
+    summary: Dict[str, object] = {
         "rules_version": "V1.3",
         "card_table_version": card_table_version,
         "deck": deck,
@@ -97,3 +123,19 @@ def run_batch(
         "avg_successful_attacks": round(mean(successful), 2),
         "avg_failed_attacks": round(mean(failed), 2),
     }
+
+    if deck == "fire_cloud":
+        card_stats: Dict[str, object] = {}
+        for name, stat in expansion_totals.items():
+            exposures = stat["player_game_exposures"]
+            plays = stat["plays"]
+            card_stats[name] = {
+                **stat,
+                "trigger_rate_per_play": round(stat["triggers"] / plays, 4) if plays else 0.0,
+                "win_rate_when_played": round(stat["wins_when_played"] / exposures, 4) if exposures else 0.0,
+                "avg_guards_removed_per_play": round(stat["guards_removed"] / plays, 4) if plays else 0.0,
+            }
+        summary["expansion_card_stats"] = card_stats
+        summary["win_rate_note"] = "win_rate_when_played为相关性指标，不代表卡牌导致胜利。"
+
+    return summary
