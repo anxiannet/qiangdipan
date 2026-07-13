@@ -1,0 +1,35 @@
+from __future__ import annotations
+
+import argparse
+import json
+
+from .runner import run_batch
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="《夕妖：抢地盘》V1.3 AI模拟器")
+    parser.add_argument("--players", type=int, choices=[2, 3, 4], default=4)
+    parser.add_argument("--domain-count", type=int, choices=[2, 3, 4], default=4)
+    parser.add_argument("--center-size", type=int, choices=[2, 3], default=3)
+    parser.add_argument("--ai", choices=["aggressive", "human_like"], default="human_like")
+    parser.add_argument("--games", type=int, default=3000)
+    parser.add_argument("--seed", type=int, default=20260713)
+    parser.add_argument("--json", action="store_true")
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
+    summary = run_batch(
+        args.ai,
+        args.players,
+        args.domain_count,
+        args.center_size,
+        args.games,
+        args.seed,
+    )
+    print(
+        json.dumps(summary, ensure_ascii=False, indent=2)
+        if args.json
+        else "\n".join(f"{key}: {value}" for key, value in summary.items())
+    )
