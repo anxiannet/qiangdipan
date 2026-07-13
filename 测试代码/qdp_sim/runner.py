@@ -7,6 +7,15 @@ from .models import GameResult
 from .tuned_game import TunedGame
 
 
+def normalize_ai(ai: str) -> tuple[str, str]:
+    """返回（内部策略名，报告显示名）。"""
+    if ai == "human_like":
+        return "human_like", "human_like"
+    if ai in ("stress_attack", "aggressive"):
+        return "aggressive", "stress_attack"
+    raise ValueError(f"未知AI: {ai}")
+
+
 def run_batch(
     ai: str,
     players_count: int,
@@ -18,9 +27,10 @@ def run_batch(
     if games <= 0:
         raise ValueError("games必须大于0")
 
+    internal_ai, report_ai = normalize_ai(ai)
     results: List[GameResult] = []
     for index in range(games):
-        game = TunedGame(ai, players_count, domain_count, center_size, seed + index)
+        game = TunedGame(internal_ai, players_count, domain_count, center_size, seed + index)
         result = None
         while result is None:
             result = game.take_turn()
@@ -42,7 +52,12 @@ def run_batch(
         "rules_version": "V1.3",
         "card_table_version": "V1.3-卡表-029",
         "deck_size": 40,
-        "ai": ai,
+        "ai": report_ai,
+        "ai_role": (
+            "正式平衡测试主模型"
+            if report_ai == "human_like"
+            else "高频抢地盘与拖局风险压力测试，不用于正常平衡结论"
+        ),
         "players": players_count,
         "domain_count": domain_count,
         "center_size": center_size,
