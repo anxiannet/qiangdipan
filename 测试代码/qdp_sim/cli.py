@@ -11,7 +11,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--players", type=int, choices=[2, 3, 4], default=4)
     parser.add_argument("--domain-count", type=int, choices=[2, 3, 4], default=4)
     parser.add_argument("--center-size", type=int, choices=[2, 3], default=3)
-    parser.add_argument("--ai", choices=["aggressive", "human_like"], default="human_like")
+    parser.add_argument(
+        "--ai",
+        choices=["human_like", "stress_attack", "aggressive"],
+        default="human_like",
+        help=(
+            "human_like用于正式平衡测试；stress_attack用于高频抢地盘压力测试；"
+            "aggressive为旧参数兼容别名。"
+        ),
+    )
     parser.add_argument("--games", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=20260713)
     parser.add_argument("--json", action="store_true")
