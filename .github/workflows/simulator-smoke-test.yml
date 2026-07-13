@@ -25,7 +25,10 @@ jobs:
         run: |
           set -e
           for p in 2 3 4; do
-            for ai in human_like aggressive; do
+            for ai in human_like stress_attack; do
               python "测试代码/4人基础版AI模拟器.py" --players "$p" --ai "$ai" --games 100 --seed 20260713 --json
             done
           done
+      - name: Legacy alias
+        run: |
+          python "测试代码/4人基础版AI模拟器.py" --players 2 --ai aggressive --games 1 --seed 20260713 --json
