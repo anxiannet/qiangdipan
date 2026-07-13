@@ -3,8 +3,8 @@ from __future__ import annotations
 from statistics import mean, median
 from typing import Dict, List
 
-from .game import Game
 from .models import GameResult
+from .tuned_game import TunedGame
 
 
 def run_batch(
@@ -20,7 +20,7 @@ def run_batch(
 
     results: List[GameResult] = []
     for index in range(games):
-        game = Game(ai, players_count, domain_count, center_size, seed + index)
+        game = TunedGame(ai, players_count, domain_count, center_size, seed + index)
         result = None
         while result is None:
             result = game.take_turn()
