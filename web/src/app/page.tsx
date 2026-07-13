@@ -27,11 +27,12 @@ const boxContents = [
 ];
 
 const progressItems = [
-  { title: "规则 V1.2 已整理", status: "已完成", tone: "done" },
+  { title: "规则 V1.3 已整理", status: "已完成", tone: "done" },
+  { title: "标准版与火云再起18000局模拟", status: "已完成", tone: "done" },
   { title: "第一版印刷文件已准备", status: "已完成", tone: "done" },
   { title: "包装盒测试推进中", status: "进行中", tone: "doing" },
   { title: "网站已部署", status: "已完成", tone: "done" },
-  { title: "试玩预热准备中", status: "进行中", tone: "doing" }
+  { title: "实体试玩准备中", status: "进行中", tone: "doing" }
 ];
 
 export default function HomePage() {
@@ -178,14 +179,14 @@ export default function HomePage() {
           <span className="cta-creature cta-creature-left" aria-hidden="true" />
           <span className="cta-creature cta-creature-right" aria-hidden="true" />
           <h2 id="playtest-title" className="qdp-section-title">
-            想先试一局？
+            想先看看测试结果？
           </h2>
           <div className="playtest-actions">
-            <a className="qdp-button qdp-button-primary" href="/play">
-              关注试玩进度
+            <a className="qdp-button qdp-button-primary" href="/devlog/simulation-results">
+              查看18000局模拟结果
             </a>
-            <a className="qdp-button qdp-button-secondary" href="/crowdfunding">
-              查看众筹预热
+            <a className="qdp-button qdp-button-secondary" href="/crowdfunding/playtest-feedback">
+              关注实体试玩反馈
             </a>
           </div>
         </section>
