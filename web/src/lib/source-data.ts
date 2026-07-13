@@ -71,6 +71,11 @@ export const corePages: Record<string, LinkItem> = {
   presalePlan: { href: "/crowdfunding/presale-plan", label: "预售计划", description: "承接后续小批量预售计划。" },
   playtestFeedback: { href: "/crowdfunding/playtest-feedback", label: "试玩反馈", description: "承接玩家测试反馈展示。" },
   devlog: { href: "/devlog", label: "开发记录", description: "记录规则、美术、印刷和网站进展。" },
+  simulationResults: {
+    href: "/devlog/simulation-results",
+    label: "AI模拟测试结果",
+    description: "查看标准版与《火云再起》18000局正式模拟对比。"
+  },
   roadmap: { href: "/devlog/roadmap", label: "开发路线图", description: "查看后续阶段推进顺序。" },
   websiteDevlog: { href: "/devlog/website", label: "网站开发记录", description: "记录官网结构与部署进展。" }
 };
