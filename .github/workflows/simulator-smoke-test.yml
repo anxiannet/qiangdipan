@@ -1,4 +1,4 @@
-name: Simulator Smoke Test
+name: Simulator Regression Test
 
 on:
   push:
@@ -20,12 +20,12 @@ jobs:
       - name: Import
         run: |
           cd 测试代码
-          python -c "from qdp_sim import Game, run_batch; print('import ok')"
-      - name: Smoke matrix
+          python -c "from qdp_sim import Game, run_batch; from qdp_sim.tuned_game import TunedGame; print('import ok')"
+      - name: Regression matrix
         run: |
           set -e
           for p in 2 3 4; do
             for ai in human_like aggressive; do
-              python "测试代码/4人基础版AI模拟器.py" --players "$p" --ai "$ai" --games 20 --seed 20260713 --json
+              python "测试代码/4人基础版AI模拟器.py" --players "$p" --ai "$ai" --games 100 --seed 20260713 --json
             done
           done
