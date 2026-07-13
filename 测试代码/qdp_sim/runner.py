@@ -3,17 +3,25 @@ from __future__ import annotations
 from statistics import mean, median
 from typing import Dict, List
 
+from .expansion import EXPANSION_CARD_TABLE_VERSION, EXPANSION_NAME, TunedExpansionGame
 from .models import GameResult
 from .tuned_game import TunedGame
 
 
 def normalize_ai(ai: str) -> tuple[str, str]:
-    """返回（内部策略名，报告显示名）。"""
     if ai == "human_like":
         return "human_like", "human_like"
     if ai in ("stress_attack", "aggressive"):
         return "aggressive", "stress_attack"
     raise ValueError(f"未知AI: {ai}")
+
+
+def normalize_deck(deck: str) -> tuple[type, str, str, int]:
+    if deck == "standard":
+        return TunedGame, "标准版", "V1.3-卡表-029", 40
+    if deck == "fire_cloud":
+        return TunedExpansionGame, f"标准版+{EXPANSION_NAME}", EXPANSION_CARD_TABLE_VERSION, 50
+    raise ValueError(f"未知牌组: {deck}")
 
 
 def run_batch(
@@ -23,14 +31,16 @@ def run_batch(
     center_size: int,
     games: int,
     seed: int,
+    deck: str = "standard",
 ) -> Dict[str, object]:
     if games <= 0:
         raise ValueError("games必须大于0")
 
     internal_ai, report_ai = normalize_ai(ai)
+    game_class, deck_name, card_table_version, deck_size = normalize_deck(deck)
     results: List[GameResult] = []
     for index in range(games):
-        game = TunedGame(internal_ai, players_count, domain_count, center_size, seed + index)
+        game = game_class(internal_ai, players_count, domain_count, center_size, seed + index)
         result = None
         while result is None:
             result = game.take_turn()
@@ -50,8 +60,10 @@ def run_batch(
 
     return {
         "rules_version": "V1.3",
-        "card_table_version": "V1.3-卡表-029",
-        "deck_size": 40,
+        "card_table_version": card_table_version,
+        "deck": deck,
+        "deck_name": deck_name,
+        "deck_size": deck_size,
         "ai": report_ai,
         "ai_role": (
             "正式平衡测试主模型"
