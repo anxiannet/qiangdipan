@@ -3,9 +3,9 @@ from __future__ import annotations
 from statistics import mean, median
 from typing import Dict, List
 
-from .expansion import EXPANSION_CARD_TABLE_VERSION, EXPANSION_NAME, TunedExpansionGame
+from .expansion import EXPANSION_NAME
 from .models import GameResult
-from .tuned_game import TunedGame
+from .rules_030 import FireCloud030Game, Standard030Game
 
 
 def normalize_ai(ai: str) -> tuple[str, str]:
@@ -18,9 +18,9 @@ def normalize_ai(ai: str) -> tuple[str, str]:
 
 def normalize_deck(deck: str) -> tuple[type, str, str, int]:
     if deck == "standard":
-        return TunedGame, "标准版", "V1.3-卡表-029", 40
+        return Standard030Game, "标准版", "V1.3-卡表-030", 40
     if deck == "fire_cloud":
-        return TunedExpansionGame, f"标准版+{EXPANSION_NAME}", EXPANSION_CARD_TABLE_VERSION, 50
+        return FireCloud030Game, f"标准版+{EXPANSION_NAME}", "V1.3-卡表-030", 50
     raise ValueError(f"未知牌组: {deck}")
 
 
