@@ -30,8 +30,22 @@ Realm Ruckus标准版卡表.md
 Realm Ruckus英文核心规则.md
 Realm Ruckus英文指南卡.md
 Realm Ruckus视觉与UI规范.md
+Realm Ruckus单卡美术方案.md
 Realm Ruckus制作与审核流程.md
 ```
+
+## 文件职责
+
+| 文件 | 职责 |
+|---|---|
+| 主题方案 | 产品定位、基础命名、宣传语和总体方向 |
+| 世界观规范 | 世界运行逻辑、四Realm、文化边界和命名原则 |
+| 标准版卡表 | 英文卡名、卡面文案和RRK卡号分配入口 |
+| 英文核心规则 | 英文玩家完整规则 |
+| 英文指南卡 | 两张双面盒内速查卡文案 |
+| 视觉与UI规范 | 英文卡面框架、视觉体系、卡背和印刷要求 |
+| 单卡美术方案 | 19种Monster、4件Relic和12块Territory的逐卡美术需求 |
+| 制作与审核流程 | 从命名到印刷交付的生产和验收流程 |
 
 ## 读取顺序
 
@@ -41,7 +55,8 @@ Realm Ruckus制作与审核流程.md
 4. `Realm Ruckus英文核心规则.md`
 5. `Realm Ruckus英文指南卡.md`
 6. `Realm Ruckus视觉与UI规范.md`
-7. `Realm Ruckus制作与审核流程.md`
+7. `Realm Ruckus单卡美术方案.md`
+8. `Realm Ruckus制作与审核流程.md`
 
 ## 当前状态
 
@@ -50,5 +65,12 @@ Realm Ruckus制作与审核流程.md
 宣传语：Monsters. Mischief. Total Takeover.
 建议卡号前缀：RRK
 规则基线：V1.3
-当前阶段：英文皮肤制作规范已建立，正式RRK卡号与成品美术尚未分配
+世界观规范：已建立
+英文规则：已建立
+英文指南卡：已建立
+英文派生卡表：已建立，正式RRK卡号待分配
+视觉与UI规范：已建立
+逐卡美术需求：已建立，成品插画待制作
+制作审核流程：已建立
+当前阶段：可进入英文命名复核、UI原型与首批插画制作
 ```
