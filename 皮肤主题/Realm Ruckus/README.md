@@ -26,6 +26,7 @@
 ```text
 Realm Ruckus主题方案.md
 Realm Ruckus世界观规范.md
+Realm Ruckus品牌检索记录.md
 Realm Ruckus标准版卡表.md
 Realm Ruckus英文核心规则.md
 Realm Ruckus英文指南卡.md
@@ -41,6 +42,7 @@ Realm Ruckus制作与审核流程.md
 |---|---|
 | 主题方案 | 产品定位、基础命名、宣传语和总体方向 |
 | 世界观规范 | 世界运行逻辑、四Realm、文化边界和命名原则 |
+| 品牌检索记录 | 名称含义、同名作品初筛、品牌风险和商标后续工作 |
 | 标准版卡表 | 英文卡名、卡面文案和RRK卡号分配入口 |
 | 英文核心规则 | 英文玩家完整规则 |
 | 英文指南卡 | 两张双面盒内速查卡文案 |
@@ -53,13 +55,14 @@ Realm Ruckus制作与审核流程.md
 
 1. `Realm Ruckus主题方案.md`
 2. `Realm Ruckus世界观规范.md`
-3. `Realm Ruckus标准版卡表.md`
-4. `Realm Ruckus英文核心规则.md`
-5. `Realm Ruckus英文指南卡.md`
-6. `Realm Ruckus视觉与UI规范.md`
-7. `视觉锚点/Realm Ruckus-整套卡牌视觉锚点海报-v1.png`
-8. `Realm Ruckus单卡美术方案.md`
-9. `Realm Ruckus制作与审核流程.md`
+3. `Realm Ruckus品牌检索记录.md`
+4. `Realm Ruckus标准版卡表.md`
+5. `Realm Ruckus英文核心规则.md`
+6. `Realm Ruckus英文指南卡.md`
+7. `Realm Ruckus视觉与UI规范.md`
+8. `视觉锚点/Realm Ruckus-整套卡牌视觉锚点海报-v1.png`
+9. `Realm Ruckus单卡美术方案.md`
+10. `Realm Ruckus制作与审核流程.md`
 
 ## 当前状态
 
@@ -68,6 +71,7 @@ Realm Ruckus制作与审核流程.md
 宣传语：Monsters. Mischief. Total Takeover.
 建议卡号前缀：RRK
 规则基线：V1.3
+品牌公开初筛：已完成，未发现明显完全同名游戏；正式商标清查未完成
 世界观规范：已建立
 英文规则：已建立
 英文指南卡：已建立
@@ -76,5 +80,5 @@ Realm Ruckus制作与审核流程.md
 当前视觉锚点：视觉锚点/Realm Ruckus-整套卡牌视觉锚点海报-v1.png
 逐卡美术需求：已建立，成品插画待制作
 制作审核流程：已建立
-当前阶段：可进入英文命名复核、UI原型与首批插画制作
+当前阶段：可进入英文命名复核、UI原型与首批插画制作；批量印刷前完成正式商标清查
 ```
