@@ -7,11 +7,18 @@ export default function RulesPage() {
       <SiteHeader />
       <PageMain>
         <Breadcrumbs items={[corePages.rules]} />
-        <PageHero eyebrow="RulesHero" title="规则入口" actions={links("baseRules", "manual", "quickReference")}>
+        <PageHero eyebrow="RulesHero" title="规则入口" actions={links("baseRules", "duelRules", "manual", "quickReference")}>
           <p>第一阶段建立规则阅读路径。核心胜利条件固定为：控制同一妖域 3 块地盘，立即获胜。</p>
         </PageHero>
         <InfoSection title="规则模块" eyebrow="RulesModeCards">
-          <EntryGrid items={links("baseRules", "skills", "skillRating", "ruleHistory", "futureRules", "manual", "quickReference")} />
+          <EntryGrid items={links("baseRules", "duelRules", "skills", "skillRating", "ruleHistory", "futureRules", "manual", "quickReference")} />
+        </InfoSection>
+        <InfoSection title="双人局推荐" eyebrow="DuelRecommendation">
+          <div className="entry-grid">
+            <div className="entry-card"><strong>快速局</strong><span>2个妖域，6块地盘，中央2块。</span></div>
+            <div className="entry-card"><strong>标准局</strong><span>3个妖域，9块地盘，中央2块。当前默认推荐。</span></div>
+            <div className="entry-card"><strong>完整局</strong><span>4个妖域，12块地盘，中央3块。</span></div>
+          </div>
         </InfoSection>
         <InfoSection title="快速开始" eyebrow="RulesQuickStart">
           <div className="steps">
@@ -22,10 +29,10 @@ export default function RulesPage() {
           </div>
         </InfoSection>
         <InfoSection title="规则变化" eyebrow="RuleHistoryEntry">
-          <EntryGrid items={links("ruleHistory", "futureRules")} />
+          <EntryGrid items={links("ruleHistory", "futureRules", "simulationResults")} />
         </InfoSection>
         <RelatedPagesBlock items={links("cards", "play", "print", "devlog")} />
-        <ContinueReadingBlock items={links("baseRules", "skills", "skillRating")} />
+        <ContinueReadingBlock items={links("baseRules", "duelRules", "skills", "skillRating")} />
       </PageMain>
       <SiteFooter />
     </>
