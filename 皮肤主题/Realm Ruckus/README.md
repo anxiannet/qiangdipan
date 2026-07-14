@@ -32,6 +32,7 @@ Realm Ruckus英文指南卡.md
 Realm Ruckus视觉与UI规范.md
 Realm Ruckus单卡美术方案.md
 Realm Ruckus制作与审核流程.md
+视觉锚点/Realm Ruckus-整套卡牌视觉锚点海报-v1.png
 ```
 
 ## 文件职责
@@ -46,6 +47,7 @@ Realm Ruckus制作与审核流程.md
 | 视觉与UI规范 | 英文卡面框架、视觉体系、卡背和印刷要求 |
 | 单卡美术方案 | 19种Monster、4件Relic和12块Territory的逐卡美术需求 |
 | 制作与审核流程 | 从命名到印刷交付的生产和验收流程 |
+| 视觉锚点海报 | 整套卡牌、包装、指南卡和宣传资产的当前统一视觉参考 |
 
 ## 读取顺序
 
@@ -55,8 +57,9 @@ Realm Ruckus制作与审核流程.md
 4. `Realm Ruckus英文核心规则.md`
 5. `Realm Ruckus英文指南卡.md`
 6. `Realm Ruckus视觉与UI规范.md`
-7. `Realm Ruckus单卡美术方案.md`
-8. `Realm Ruckus制作与审核流程.md`
+7. `视觉锚点/Realm Ruckus-整套卡牌视觉锚点海报-v1.png`
+8. `Realm Ruckus单卡美术方案.md`
+9. `Realm Ruckus制作与审核流程.md`
 
 ## 当前状态
 
@@ -70,6 +73,7 @@ Realm Ruckus制作与审核流程.md
 英文指南卡：已建立
 英文派生卡表：已建立，正式RRK卡号待分配
 视觉与UI规范：已建立
+当前视觉锚点：视觉锚点/Realm Ruckus-整套卡牌视觉锚点海报-v1.png
 逐卡美术需求：已建立，成品插画待制作
 制作审核流程：已建立
 当前阶段：可进入英文命名复核、UI原型与首批插画制作
