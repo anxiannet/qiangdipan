@@ -19,6 +19,15 @@ const comparisonRows = [
   { players: "4人", deck: "标准版 + 火云再起", direct: "2939", settlement: "22", draws: "21", timeouts: "18", turns: "25.49" }
 ];
 
+const duelRows = [
+  { deck: "标准版40张", territories: "6", center: "2", direct: "100.00%", timeout: "0.00%", turns: "9.36", median: "7", p90: "18", empty: "0.80%", attacks: "1.31", returns: "1.50" },
+  { deck: "标准版40张", territories: "9", center: "2", direct: "98.37%", timeout: "0.73%", turns: "20.94", median: "17", p90: "38", empty: "18.13%", attacks: "4.23", returns: "3.74" },
+  { deck: "标准版40张", territories: "12", center: "3", direct: "96.17%", timeout: "1.43%", turns: "26.57", median: "21", p90: "50", empty: "29.70%", attacks: "5.85", returns: "4.94" },
+  { deck: "火云再起50张", territories: "6", center: "2", direct: "99.90%", timeout: "0.10%", turns: "10.70", median: "8", p90: "20", empty: "0.67%", attacks: "1.29", returns: "2.82" },
+  { deck: "火云再起50张", territories: "9", center: "2", direct: "97.37%", timeout: "1.00%", turns: "23.30", median: "18", p90: "44", empty: "12.83%", attacks: "4.48", returns: "5.74" },
+  { deck: "火云再起50张", territories: "12", center: "3", direct: "94.90%", timeout: "1.83%", turns: "29.77", median: "23", p90: "55", empty: "23.53%", attacks: "6.18", returns: "7.17" }
+];
+
 const deckRows = [
   { players: "2人", standard: "29.70%", expansion: "23.53%", returns: "4.94 → 7.17" },
   { players: "3人", standard: "30.97%", expansion: "20.57%", returns: "4.94 → 6.28" },
@@ -54,10 +63,10 @@ export default function SimulationResultsPage() {
       <SiteHeader />
       <PageMain>
         <Breadcrumbs items={[corePages.devlog, corePages.simulationResults]} />
-        <PageHero eyebrow="AI Simulation Report" title="标准版与《火云再起》正式模拟结果" actions={links("baseRules", "cards")}>
+        <PageHero eyebrow="AI Simulation Report" title="AI模拟测试结果" actions={links("baseRules", "duelRules", "cards")}>
           <p>
-            使用 human_like 正式平衡模型，对标准版与“标准版 + 火云再起”进行2人、3人、4人各3000局测试，共18000局。
-            当前结果用于发现规则收束、局时与扩展牌互动风险，不替代真人实体试玩。
+            当前公开结果包括标准版与“标准版 + 火云再起”2至4人正式测试18000局，以及双人6块、9块地盘专项测试12000局。
+            AI模拟用于发现规则收束、局时与互动风险，不替代真人实体试玩。
           </p>
         </PageHero>
 
@@ -65,12 +74,12 @@ export default function SimulationResultsPage() {
           <div className="entry-grid">
             <div className="entry-card"><strong>规则版本</strong><span>V1.3</span></div>
             <div className="entry-card"><strong>卡表版本</strong><span>V1.3-卡表-030</span></div>
-            <div className="entry-card"><strong>正式样本</strong><span>18000局</span></div>
-            <div className="entry-card"><strong>随机种子</strong><span>20260713</span></div>
+            <div className="entry-card"><strong>公开正式样本</strong><span>30000局</span></div>
+            <div className="entry-card"><strong>AI模型</strong><span>human_like</span></div>
           </div>
         </InfoSection>
 
-        <InfoSection title="总体对比" eyebrow="Main Comparison">
+        <InfoSection title="2至4人牌组对比：18000局" eyebrow="Main Comparison">
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 760 }}>
               <thead>
@@ -99,6 +108,48 @@ export default function SimulationResultsPage() {
               </tbody>
             </table>
           </div>
+        </InfoSection>
+
+        <InfoSection title="双人6块、9块、12块地盘对比" eyebrow="Duel Territory Comparison">
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 1120 }}>
+              <thead>
+                <tr>
+                  <th style={headStyle}>牌库</th>
+                  <th style={headStyle}>地盘</th>
+                  <th style={headStyle}>中央</th>
+                  <th style={headStyle}>直接胜利率</th>
+                  <th style={headStyle}>超时率</th>
+                  <th style={headStyle}>平均回合</th>
+                  <th style={headStyle}>中位回合</th>
+                  <th style={headStyle}>P90</th>
+                  <th style={headStyle}>牌库耗尽率</th>
+                  <th style={headStyle}>成功攻击</th>
+                  <th style={headStyle}>地盘回流</th>
+                </tr>
+              </thead>
+              <tbody>
+                {duelRows.map((row) => (
+                  <tr key={`${row.deck}-${row.territories}`}>
+                    <td style={cellStyle}>{row.deck}</td>
+                    <td style={cellStyle}>{row.territories}</td>
+                    <td style={cellStyle}>{row.center}</td>
+                    <td style={cellStyle}>{row.direct}</td>
+                    <td style={cellStyle}>{row.timeout}</td>
+                    <td style={cellStyle}>{row.turns}</td>
+                    <td style={cellStyle}>{row.median}</td>
+                    <td style={cellStyle}>{row.p90}</td>
+                    <td style={cellStyle}>{row.empty}</td>
+                    <td style={cellStyle}>{row.attacks}</td>
+                    <td style={cellStyle}>{row.returns}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            双人默认推荐9块地盘、中央2块。6块适合快速教学；12块可作为完整长局。6块增加到9块带来显著更多互动，9块增加到12块则主要增加局时与牌库耗尽。
+          </p>
         </InfoSection>
 
         <InfoSection title="牌库耗尽与地盘回流" eyebrow="Deck And Territory">
@@ -148,12 +199,12 @@ export default function SimulationResultsPage() {
 
         <InfoSection title="当前审核结论" eyebrow="Review Conclusion">
           <p>
-            《火云再起》通过当前AI模拟层面的初步平衡审核。暂不修改卡牌数量或核心技能，下一阶段重点通过实体试玩观察2人局震荡、芭蕉扇的挫败感，以及1星抽牌卡在后期牌库耗尽时的实际体验。
+            《火云再起》通过当前AI模拟层面的初步平衡审核。双人局默认推荐3个妖域、9块地盘、中央2块；6块保留为快速局，12块保留为完整长局。
           </p>
           <p>AI模拟结果只作为风险筛查和回归依据，不能替代真人的策略、沟通、喊名互动和主观体验。</p>
         </InfoSection>
 
-        <RelatedPagesBlock items={links("devlog", "playtestFeedback", "ruleHistory", "cards")} />
+        <RelatedPagesBlock items={links("duelRules", "devlog", "playtestFeedback", "ruleHistory", "cards")} />
         <ContinueReadingBlock items={links("baseRules", "skills", "crowdfunding")} />
       </PageMain>
       <SiteFooter />
