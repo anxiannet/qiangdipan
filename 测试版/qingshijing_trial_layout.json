@@ -1,6 +1,5 @@
 {
   "card_id": "qingshijing_trial",
-  "name": "青狮精",
   "version": "trial_frame_approved_2026-07-01",
   "status": "frame_approved",
   "print": {
@@ -35,7 +34,6 @@
     "approved_audit": "资源/审核定稿/青狮精_试玩版/青狮精_试玩版_边框通过_审核辅助线_815x1110.png"
   },
   "trial_folder_locked_resources": {
-    "data": "测试版/青狮精_测试版_固化数据.json",
     "frame_rgb": "测试版/qingshijing-frame-approved-673x969.png",
     "frame_transparent": "测试版/qingshijing-frame-approved-673x969-transparent.png",
     "star_trimmed": "测试版/star-approved-48x48.png",
@@ -70,28 +68,104 @@
     "bottom": 770,
     "rule": "Background image is clipped to this window and must not extend under the frame or outside the frame."
   },
+  "card_compositor_v2_layout": {
+    "canvas_size": [
+      815,
+      1110
+    ],
+    "dpi": 300,
+    "art_box": [
+      55,
+      97,
+      763,
+      840
+    ],
+    "icon": {
+      "center": [
+        160,
+        913
+      ],
+      "opening_radius": 67,
+      "box": [
+        93,
+        846,
+        227,
+        980
+      ]
+    },
+    "skill_panel_box": [
+      63,
+      783,
+      757,
+      1048
+    ],
+    "level_box": [
+      51,
+      65,
+      175,
+      187
+    ],
+    "name_layout": {
+      "chinese_box": [
+        190,
+        91,
+        675,
+        150
+      ],
+      "english_box": [
+        190,
+        158,
+        675,
+        177.6666666667
+      ],
+      "height_ratio": 3,
+      "zone_gap_px": 8,
+      "chinese_character_spacing_px": 5,
+      "english_character_spacing_px": 0,
+      "english_word_spacing_px": 5,
+      "english_decoration": {
+        "max_source_fit_size": [
+          72,
+          18
+        ],
+        "width_scale": 0.7,
+        "height_scale": 0.5,
+        "text_gap_px": 20,
+        "right_side_mirrored": true
+      }
+    },
+    "skill_box": [
+      235,
+      840,
+      735,
+      910
+    ],
+    "english_skill_box": [
+      285,
+      925,
+      685,
+      1005
+    ],
+    "english_skill_alignment": "top_center",
+    "english_skill_font_matches_chinese": true,
+    "english_skill_wrap": "auto",
+    "footer": {
+      "content_box": [
+        61,
+        1042,
+        754,
+        1060
+      ],
+      "item_gap_px": 24,
+      "alignment": "group_center"
+    }
+  },
   "stars": {
-    "count": 4,
+    "capacity": 5,
     "trimmed_source_size": {
       "width": 78,
       "height": 79
     },
-    "display_size": {
-      "width": 54,
-      "height": 55
-    },
-    "visual_gap_px": 5,
-    "safe_frame_positions_x": [
-      221,
-      280,
-      339,
-      398
-    ],
-    "safe_frame_y": 34,
-    "note": "Gap is measured between visible star edges after trimming source padding, not by the original image bounding box."
-  },
-  "star_slot_capacity_test_5star": {
-    "count": 5,
     "display_size": {
       "width": 48,
       "height": 48
@@ -107,15 +181,12 @@
     "safe_frame_y": 24,
     "total_visible_width": 240,
     "outline_boxes": false,
-    "status": "locked_for_review",
-    "note": "Capacity test for five visible 48x48 stars with 0px visual gap. Actual Qing Shi Jing gameplay data remains four stars unless rules change."
+    "note": "Five-slot position scheme only; actual card star count is read from the card table."
   },
-  "text": {
-    "name": "青狮精",
-    "skill": "消灭1个3星或以下守军。"
-  },
+  "card_data_source": "规则/V1.3-基础卡表.md",
   "review": {
     "frame": "approved",
+    "card_compositor_v2_layout": "locked_2026-07-16",
     "approved_at": "2026-07-01",
     "notes": [
       "Frame source padding removed and resized to fill the 673x969 safe frame.",
