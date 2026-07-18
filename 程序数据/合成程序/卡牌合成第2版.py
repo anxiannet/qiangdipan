@@ -15,10 +15,17 @@ COMPOSITOR_VERSION = "第2版"
 COMPOSITOR_ID = "card_compositor_v2"
 
 ROOT = Path(__file__).resolve().parents[2]
-CARD_TABLE = ROOT / "规则" / "V1.3-基础卡表.md"
+CARD_TABLE = ROOT / "第2版" / "全卡面文案.md"
+QUANTITY_TABLE = ROOT / "规则" / "V1.3-基础卡表.md"
+FORMAL_ART_DIR = ROOT / "第2版" / "插画"
+FORMAL_ICON_DIR = ROOT / "第2版" / "技能图标"
+PRINT_DIR = ROOT / "第2版" / "印刷文件" / "手牌"
 FRAME_PATH = ROOT / "测试版" / "卡牌合成第2版_透明边框_815x1110的副本.png"
 SKILL_PANEL_PATH = ROOT / "测试版" / "卡牌合成第2版_技能栏_透明.png"
+SKILL_ICON_FRAME_PATH = ROOT / "测试版" / "卡牌合成第2版_技能图标圆框_透明.png"
 ENGLISH_NAME_DECORATION_PATH = ROOT / "测试版" / "卡牌合成第2版_英文名装饰.png"
+STAMP_PATH = ROOT / "测试版" / "夕妖印章_透明.png"
+FOOTER_BACKGROUND_PATH = ROOT / "测试版" / "卡牌合成第2版_版权背景纹理.png"
 FONT_DIR = ROOT / "资源" / "字体" / "思源字体"
 FONT_PATHS = {
     "serif_heavy": FONT_DIR / "SourceHanSerifCN-Heavy.otf",
@@ -29,11 +36,19 @@ FONT_PATHS = {
 
 CANVAS_SIZE = (815, 1110)
 BACKGROUND = (16, 36, 61)
-ART_BOX = (55, 97, 763, 840)
-SKILL_PANEL_POS = (63, 783)
-SKILL_PANEL_SIZE = (694, 265)
-ICON_CENTER = (160, 913)
-ICON_OPENING_RADIUS = 67
+ART_BOX = (36, 36, 780, 1075)
+ART_CORNER_RADIUS = 56
+STAMP_SIZE = (49, 69)
+STAMP_POS = (686, 718)
+SKILL_PANEL_POS = (63, 813)
+SKILL_PANEL_SIZE = (694, 215)
+ICON_CENTER = (160, 919)
+ICON_OPENING_RADIUS = 54
+SKILL_ICON_FRAME_SIZE = (142, 142)
+SKILL_ICON_FRAME_POS = (
+    ICON_CENTER[0] - SKILL_ICON_FRAME_SIZE[0] // 2,
+    ICON_CENTER[1] - SKILL_ICON_FRAME_SIZE[1] // 2,
+)
 ICON_BOX = (
     ICON_CENTER[0] - ICON_OPENING_RADIUS,
     ICON_CENTER[1] - ICON_OPENING_RADIUS,
@@ -51,10 +66,11 @@ ENGLISH_NAME_BOX = (
     NAME_BOX[3] + NAME_ZONE_GAP
     + (NAME_BOX[3] - NAME_BOX[1]) / NAME_ZONE_HEIGHT_RATIO,
 )
-SKILL_BOX = (235, 840, 735, 910)
-ENGLISH_SKILL_BOX = (285, 925, 685, 1005)
-FOOTER_CONTENT_BOX = (61, 1042, 754, 1060)
+SKILL_BOX = (235, 854, 735, 911)
+ENGLISH_SKILL_BOX = (285, 933, 685, 1015)
+FOOTER_CONTENT_BOX = (61, 1032, 754, 1061)
 FOOTER_ITEM_GAP = 24
+FOOTER_BACKGROUND_BOX = (55, 995, 763, 1066)
 
 LEVEL_FONT_ROLE = "sans_bold"
 LEVEL_FONT_SIZE = 93
@@ -81,14 +97,19 @@ ENGLISH_NAME_DECORATION_GAP = 20
 SKILL_FONT_START = 30
 SKILL_FONT_MINIMUM = 21
 SKILL_HORIZONTAL_MARGIN = 12
-FOOTER_FONT_SIZE = 13
-FOOTER_COLOR = (226, 199, 136)
-COPYRIGHT_TEXT = "© 2026 Bostage Pte. Ltd. Singapore"
+FOOTER_FONT_SIZE = 25
+FOOTER_COLOR = (242, 220, 168)
+COPYRIGHT_TEXT = "© 2026 Bostage Pte. Ltd., Singapore"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="使用第2版透明边框合成单张妖怪卡。")
     parser.add_argument("--card", default="金鼻白毛老鼠精", help="卡表中的中文卡名")
+    parser.add_argument(
+        "--formal",
+        action="store_true",
+        help="使用第2版正式插画与技能图标，按卡表数量输出印刷文件",
+    )
     return parser.parse_args()
 
 
@@ -99,33 +120,68 @@ def font(size: int, role: str = "sans_regular") -> ImageFont.ImageFont:
     return ImageFont.truetype(str(path), size)
 
 
-def pipe_cells(line: str) -> list[str]:
-    return [cell.strip() for cell in line.strip().strip("|").split("|")]
-
-
 def load_card(name: str) -> dict:
-    stars: int | None = None
+    card: dict[str, str | int] | None = None
     for raw_line in CARD_TABLE.read_text(encoding="utf-8").splitlines():
         line = raw_line.strip()
-        heading = re.match(r"## .+、([1-5])星妖怪", line)
+        heading = re.fullmatch(r"### (QDP-\d{3}) (.+)", line)
         if heading:
-            stars = int(heading.group(1))
+            card = {
+                "card_number": heading.group(1),
+                "heading_name": heading.group(2),
+            }
             continue
-        if stars is None or not line.startswith("|") or "---" in line or "卡号" in line:
+        if card is None or not line.startswith("- "):
             continue
-        cells = pipe_cells(line)
-        if len(cells) < 6 or cells[1] != name:
+        field = re.fullmatch(r"- ([^：]+)：(.*)", line)
+        if not field:
             continue
-        return {
-            "card_number": cells[0],
-            "name": cells[1],
-            "english_name": cells[2],
-            "count": int(cells[3]),
-            "stars": stars,
-            "skill_text": cells[-2],
-            "english_skill_text": cells[-1],
+        key, value = field.groups()
+        field_names = {
+            "中文名": "name",
+            "英文名": "english_name",
+            "类型": "card_type",
+            "中文技能": "skill_text",
+            "英文技能": "english_skill_text",
+            "卡号": "listed_card_number",
         }
-    raise ValueError(f"未在最新卡表中找到妖怪卡：{name}")
+        if key == "星级":
+            star_match = re.fullmatch(r"([1-5])星", value)
+            if not star_match:
+                raise ValueError(f"卡面文案星级格式错误：{value!r}")
+            card["stars"] = int(star_match.group(1))
+        elif key in field_names:
+            card[field_names[key]] = value
+
+        if key != "卡号" or card.get("name") != name:
+            continue
+        if card["listed_card_number"] != card["card_number"]:
+            raise ValueError(
+                "卡面文案标题与卡号字段不一致："
+                f"{card['card_number']} / {card['listed_card_number']}"
+            )
+        if card["heading_name"] != card["name"]:
+            raise ValueError(
+                "卡面文案标题与中文名字段不一致："
+                f"{card['heading_name']} / {card['name']}"
+            )
+        required = (
+            "card_number",
+            "name",
+            "english_name",
+            "skill_text",
+            "english_skill_text",
+        )
+        missing = [key for key in required if key not in card]
+        if missing:
+            raise ValueError(
+                f"卡面文案缺少字段：{card['card_number']} {', '.join(missing)}"
+            )
+        result = {key: card[key] for key in required}
+        result["stars"] = card.get("stars")
+        result["card_type"] = card.get("card_type", "")
+        return result
+    raise ValueError(f"未在第2版全卡面文案中找到妖怪卡：{name}")
 
 
 def card_folder(card: dict) -> Path:
@@ -133,11 +189,11 @@ def card_folder(card: dict) -> Path:
 
 
 def art_path(card: dict) -> Path:
-    return card_folder(card) / f"{card['name']}_第2版_纯插画.png"
+    return FORMAL_ART_DIR / f"{card['card_number']}-{card['name']}.png"
 
 
 def icon_path(card: dict) -> Path:
-    return card_folder(card) / f"{card['name']}_第2版_技能图标.png"
+    return FORMAL_ICON_DIR / f"{card['card_number']}-{card['name']}.png"
 
 
 def output_path(card: dict) -> Path:
@@ -149,13 +205,44 @@ def validate_card(card: dict) -> None:
     if any(char in card["english_skill_text"] for char in forbidden_dashes):
         raise ValueError(f"英文技能包含非标准连接符：{card['english_skill_text']}")
 
-    expected = "Place a 1-Star Defender in your Territory."
-    if card["card_number"] == "QDP-014" and card["english_skill_text"] != expected:
-        raise ValueError(
-            "QDP-014 英文技能与卡表标准不一致："
-            f"{card['english_skill_text']!r}"
-        )
 
+def load_print_quantity(card: dict) -> int:
+    for raw_line in QUANTITY_TABLE.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line.startswith("|") or "---" in line or "卡号" in line:
+            continue
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        if len(cells) < 4 or cells[0] != card["card_number"]:
+            continue
+        if cells[1] != card["name"]:
+            raise ValueError(
+                "印刷数量卡表与第2版文案中文名不一致："
+                f"{cells[1]} / {card['name']}"
+            )
+        quantity = int(cells[3])
+        if quantity < 1:
+            raise ValueError(f"印刷数量必须大于0：{card['card_number']}")
+        return quantity
+    raise ValueError(f"未找到印刷数量：{card['card_number']} {card['name']}")
+
+
+def formal_resource_cards() -> list[dict]:
+    cards: list[dict] = []
+    for art in sorted(FORMAL_ART_DIR.glob("QDP-???-*.png")):
+        match = re.fullmatch(r"(QDP-\d{3})-(.+)\.png", art.name)
+        if not match:
+            continue
+        number, name = match.groups()
+        card = load_card(name)
+        if card["card_number"] != number:
+            raise ValueError(f"正式插画文件名卡号不一致：{art.name}")
+        cards.append(card)
+    return cards
+
+
+def formal_print_paths(card: dict, quantity: int) -> list[Path]:
+    stem = f"{card['card_number']}-{card['name']}_第2版_完整卡牌"
+    return [PRINT_DIR / f"每样{quantity}张" / f"{stem}.png"]
 
 def cover_crop(image: Image.Image, size: tuple[int, int], focus_y: float = 0.38) -> Image.Image:
     target_w, target_h = size
@@ -279,6 +366,10 @@ def wrap_english(draw: ImageDraw.ImageDraw, text: str, width: int, text_font: Im
 
 
 def compose(card: dict) -> Image.Image:
+    if card["stars"] is None:
+        raise ValueError(
+            f"当前第2版卡框仅支持有星级妖怪卡：{card['card_number']} {card['name']}"
+        )
     chinese_name_height = NAME_BOX[3] - NAME_BOX[1]
     english_name_height = ENGLISH_NAME_BOX[3] - ENGLISH_NAME_BOX[1]
     if abs(
@@ -292,7 +383,10 @@ def compose(card: dict) -> Image.Image:
     required = (
         FRAME_PATH,
         SKILL_PANEL_PATH,
+        SKILL_ICON_FRAME_PATH,
         ENGLISH_NAME_DECORATION_PATH,
+        STAMP_PATH,
+        FOOTER_BACKGROUND_PATH,
         art_path(card),
         icon_path(card),
     )
@@ -301,11 +395,41 @@ def compose(card: dict) -> Image.Image:
         raise FileNotFoundError(f"缺少第2版资源：{'、'.join(missing)}")
 
     canvas = Image.new("RGBA", CANVAS_SIZE, BACKGROUND + (255,))
-
     artwork = Image.open(art_path(card)).convert("RGB")
     art_w, art_h = ART_BOX[2] - ART_BOX[0], ART_BOX[3] - ART_BOX[1]
     artwork = cover_crop(artwork, (art_w, art_h))
-    canvas.paste(artwork, ART_BOX[:2])
+    card_inner_mask = Image.new("L", CANVAS_SIZE, 0)
+    ImageDraw.Draw(card_inner_mask).rounded_rectangle(
+        (ART_BOX[0], ART_BOX[1], ART_BOX[2] - 1, ART_BOX[3] - 1),
+        radius=ART_CORNER_RADIUS,
+        fill=255,
+    )
+    canvas.paste(
+        artwork,
+        ART_BOX[:2],
+        card_inner_mask.crop(ART_BOX),
+    )
+
+    footer_background_size = (
+        FOOTER_BACKGROUND_BOX[2] - FOOTER_BACKGROUND_BOX[0],
+        FOOTER_BACKGROUND_BOX[3] - FOOTER_BACKGROUND_BOX[1],
+    )
+    footer_background = Image.open(FOOTER_BACKGROUND_PATH).convert("RGB")
+    footer_background = cover_crop(
+        footer_background,
+        footer_background_size,
+        focus_y=0.5,
+    )
+    canvas.paste(
+        footer_background,
+        FOOTER_BACKGROUND_BOX[:2],
+        card_inner_mask.crop(FOOTER_BACKGROUND_BOX),
+    )
+    stamp = Image.open(STAMP_PATH).convert("RGBA")
+    stamp = contain(stamp, STAMP_SIZE)
+    stamp_x = STAMP_POS[0] + (STAMP_SIZE[0] - stamp.width) // 2
+    stamp_y = STAMP_POS[1] + (STAMP_SIZE[1] - stamp.height) // 2
+    canvas.alpha_composite(stamp, (stamp_x, stamp_y))
 
     icon = Image.open(icon_path(card)).convert("RGBA")
     icon_w, icon_h = ICON_BOX[2] - ICON_BOX[0], ICON_BOX[3] - ICON_BOX[1]
@@ -325,6 +449,14 @@ def compose(card: dict) -> Image.Image:
             f"技能栏尺寸错误：{skill_panel.size}，应为 {SKILL_PANEL_SIZE}"
         )
     canvas.alpha_composite(skill_panel, SKILL_PANEL_POS)
+
+    skill_icon_frame = Image.open(SKILL_ICON_FRAME_PATH).convert("RGBA")
+    if skill_icon_frame.size != SKILL_ICON_FRAME_SIZE:
+        raise ValueError(
+            "技能图标圆框尺寸错误："
+            f"{skill_icon_frame.size}，应为 {SKILL_ICON_FRAME_SIZE}"
+        )
+    canvas.alpha_composite(skill_icon_frame, SKILL_ICON_FRAME_POS)
 
     draw = ImageDraw.Draw(canvas)
     draw_centered(
@@ -429,6 +561,7 @@ def compose(card: dict) -> Image.Image:
         SKILL_BOX[2] - SKILL_BOX[0] - SKILL_HORIZONTAL_MARGIN,
         SKILL_FONT_START,
         SKILL_FONT_MINIMUM,
+        role="sans_bold",
     )
     draw_centered(draw, card["skill_text"], SKILL_BOX, skill_font, TEXT_COLOR)
 
@@ -505,6 +638,79 @@ def compose(card: dict) -> Image.Image:
 
 def main() -> None:
     args = parse_args()
+    if args.formal:
+        PRINT_DIR.mkdir(parents=True, exist_ok=True)
+        generated: list[dict] = []
+        blocked: list[dict] = []
+        for card in formal_resource_cards():
+            missing = [
+                str(path.relative_to(ROOT))
+                for path in (art_path(card), icon_path(card))
+                if not path.exists()
+            ]
+            if missing:
+                blocked.append({
+                    "card_number": card["card_number"],
+                    "card": card["name"],
+                    "reason": f"正式资源不完整：{'、'.join(missing)}",
+                })
+                continue
+            if card["stars"] is None:
+                blocked.append({
+                    "card_number": card["card_number"],
+                    "card": card["name"],
+                    "reason": "当前第2版程序没有已审核的无星级法宝卡框",
+                })
+                continue
+            validate_card(card)
+            quantity = load_print_quantity(card)
+            image = compose(card)
+            destinations = formal_print_paths(card, quantity)
+            for destination in destinations:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                image.save(destination, dpi=(300, 300), optimize=True)
+            generated.append({
+                "card_number": card["card_number"],
+                "card": card["name"],
+                "quantity": quantity,
+                "files": [str(path.relative_to(ROOT)) for path in destinations],
+            })
+
+        icon_only = sorted(
+            path.name for path in FORMAL_ICON_DIR.glob("QDP-???-*.png")
+            if not (FORMAL_ART_DIR / path.name).exists()
+        )
+        for filename in icon_only:
+            match = re.fullmatch(r"(QDP-\d{3})-(.+)\.png", filename)
+            if not match:
+                continue
+            number, name = match.groups()
+            blocked.append({
+                "card_number": number,
+                "card": name,
+                "reason": "第2版/插画中缺少同名正式插画",
+            })
+
+        manifest = {
+            "compositor_version": COMPOSITOR_VERSION,
+            "compositor_id": COMPOSITOR_ID,
+            "copy_source": str(CARD_TABLE.relative_to(ROOT)),
+            "quantity_source": str(QUANTITY_TABLE.relative_to(ROOT)),
+            "art_source": str(FORMAL_ART_DIR.relative_to(ROOT)),
+            "icon_source": str(FORMAL_ICON_DIR.relative_to(ROOT)),
+            "canvas_size": list(CANVAS_SIZE),
+            "dpi": 300,
+            "generated": generated,
+            "blocked": blocked,
+        }
+        manifest_path = PRINT_DIR / "印刷清单.json"
+        manifest_path.write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        print(json.dumps(manifest, ensure_ascii=False, indent=2))
+        return
+
     card = load_card(args.card)
     validate_card(card)
     image = compose(card)

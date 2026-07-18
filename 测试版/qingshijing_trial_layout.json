@@ -69,35 +69,68 @@
     "rule": "Background image is clipped to this window and must not extend under the frame or outside the frame."
   },
   "card_compositor_v2_layout": {
+    "lock_status": "locked",
+    "locked_at": "2026-07-17",
     "canvas_size": [
       815,
       1110
     ],
     "dpi": 300,
+    "resources": {
+      "frame": "测试版/卡牌合成第2版_透明边框_815x1110的副本.png",
+      "skill_panel": "测试版/卡牌合成第2版_技能栏_透明.png",
+      "skill_icon_frame": "测试版/卡牌合成第2版_技能图标圆框_透明.png",
+      "english_name_decoration": "测试版/卡牌合成第2版_英文名装饰.png",
+      "illustration_stamp": "测试版/夕妖印章_透明.png",
+      "footer_background": "测试版/卡牌合成第2版_版权背景纹理.png"
+    },
     "art_box": [
-      55,
-      97,
-      763,
-      840
+      36,
+      36,
+      780,
+      1075
     ],
+    "art_fit": "cover_full_trim_box",
+    "art_corner_radius": 56,
+    "illustration_stamp": {
+      "resource": "测试版/夕妖印章_透明.png",
+      "position": [
+        686,
+        718
+      ],
+      "fit_size": [
+        49,
+        69
+      ],
+      "alignment": "illustration_bottom_right",
+      "source_background_removed": true
+    },
     "icon": {
       "center": [
         160,
-        913
+        919
       ],
-      "opening_radius": 67,
+      "opening_radius": 54,
+      "frame_resource": "测试版/卡牌合成第2版_技能图标圆框_透明.png",
+      "frame_box": [
+        89,
+        848,
+        231,
+        990
+      ],
+      "frame_compositing": "standalone_round_overlay",
       "box": [
-        93,
-        846,
-        227,
-        980
+        106,
+        865,
+        214,
+        973
       ]
     },
     "skill_panel_box": [
       63,
-      783,
+      813,
       757,
-      1048
+      1028
     ],
     "level_box": [
       51,
@@ -136,25 +169,43 @@
     },
     "skill_box": [
       235,
-      840,
+      854,
       735,
-      910
+      911
     ],
     "english_skill_box": [
       285,
-      925,
+      933,
       685,
-      1005
+      1015
     ],
     "english_skill_alignment": "top_center",
     "english_skill_font_matches_chinese": true,
+    "skill_font_role": "SourceHanSansSC-Bold",
     "english_skill_wrap": "auto",
     "footer": {
+      "background_box": [
+        55,
+        995,
+        763,
+        1066
+      ],
+      "background_resource": "测试版/卡牌合成第2版_版权背景纹理.png",
+      "background_fit": "cover_center_crop",
+      "background_layer": "before_frame_and_skill_panel",
+      "frame_residue_removed_in_source_asset": true,
+      "copyright_text": "© 2026 Bostage Pte. Ltd., Singapore",
       "content_box": [
         61,
-        1042,
+        1032,
         754,
-        1060
+        1061
+      ],
+      "font_size_px": 25,
+      "text_rgb": [
+        242,
+        220,
+        168
       ],
       "item_gap_px": 24,
       "alignment": "group_center"
@@ -183,14 +234,16 @@
     "outline_boxes": false,
     "note": "Five-slot position scheme only; actual card star count is read from the card table."
   },
-  "card_data_source": "规则/V1.3-基础卡表.md",
+  "card_data_source": "第2版/全卡面文案.md",
   "review": {
     "frame": "approved",
-    "card_compositor_v2_layout": "locked_2026-07-16",
+    "card_compositor_v2_layout": "locked_2026-07-17",
     "approved_at": "2026-07-01",
     "notes": [
       "Frame source padding removed and resized to fill the 673x969 safe frame.",
-      "Background is clipped inside the frame window.",
+      "Background illustration fills the rounded trim box.",
+      "Frame interior residue was removed directly from the transparent frame asset.",
+      "Skill panel is composited above the copyright background.",
       "Stars use trimmed visible bounds with 5px visual spacing."
     ]
   }

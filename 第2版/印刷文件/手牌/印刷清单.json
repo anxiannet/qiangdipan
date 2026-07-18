@@ -1,0 +1,35 @@
+{
+  "compositor_version": "第2版",
+  "compositor_id": "card_compositor_v2",
+  "copy_source": "第2版/全卡面文案.md",
+  "quantity_source": "规则/V1.3-基础卡表.md",
+  "art_source": "第2版/插画",
+  "icon_source": "第2版/技能图标",
+  "canvas_size": [
+    815,
+    1110
+  ],
+  "dpi": 300,
+  "generated": [
+    {
+      "card_number": "QDP-014",
+      "card": "金鼻白毛老鼠精",
+      "quantity": 2,
+      "files": [
+        "第2版/印刷文件/手牌/每样2张/QDP-014-金鼻白毛老鼠精_第2版_完整卡牌.png"
+      ]
+    }
+  ],
+  "blocked": [
+    {
+      "card_number": "QDP-020",
+      "card": "紫金红葫芦",
+      "reason": "当前第2版程序没有已审核的无星级法宝卡框"
+    },
+    {
+      "card_number": "QDP-001",
+      "card": "小钻风",
+      "reason": "第2版/插画中缺少同名正式插画"
+    }
+  ]
+}
