@@ -1,0 +1,41 @@
+name: Simulator Formal Test
+
+on:
+  push:
+    paths:
+      - '测试代码/**'
+      - '.github/workflows/simulator-smoke-test.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile
+        run: python -m py_compile "测试代码/4人基础版AI模拟器.py" 测试代码/qdp_sim/*.py
+      - name: Import and deck checks
+        run: |
+          cd 测试代码
+          python -c "from qdp_sim import run_batch; from qdp_sim.expansion import build_fire_cloud_deck; assert len(build_fire_cloud_deck()) == 50; print('import and deck checks ok')"
+      - name: Formal standard and expansion tests
+        run: |
+          set -e
+          mkdir -p 测试结果
+          for p in 2 3 4; do
+            python "测试代码/4人基础版AI模拟器.py" --deck standard --players "$p" --ai human_like --games 3000 --seed 20260713 --json > "测试结果/standard_${p}p_3000.json"
+            python "测试代码/4人基础版AI模拟器.py" --deck fire_cloud --players "$p" --ai human_like --games 3000 --seed 20260713 --json > "测试结果/fire_cloud_${p}p_3000.json"
+          done
+      - name: Stress smoke test
+        run: |
+          python "测试代码/4人基础版AI模拟器.py" --deck fire_cloud --players 4 --ai stress_attack --games 100 --seed 20260713 --json > "测试结果/fire_cloud_4p_stress_100.json"
+      - name: Legacy alias
+        run: |
+          python "测试代码/4人基础版AI模拟器.py" --players 2 --ai aggressive --games 1 --seed 20260713 --json > /dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: simulator-formal-results
+          path: 测试结果/*.json

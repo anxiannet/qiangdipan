@@ -47,8 +47,9 @@ export const corePages: Record<string, LinkItem> = {
   cards: { href: "/cards", label: "卡牌图鉴", description: "查看基础版卡牌的卡册入口。" },
   cardHistory: { href: "/cards/history", label: "卡牌调整历史", description: "记录卡牌进入测试后的变化。" },
   backupCards: { href: "/cards/backup", label: "备选卡表", description: "后续扩展和候选卡牌的展示入口。" },
-  rules: { href: "/rules", label: "规则入口", description: "从基础规则、技能和玩家版说明进入。" },
+  rules: { href: "/rules", label: "规则入口", description: "从基础规则、双人规则、技能和玩家版说明进入。" },
   baseRules: { href: "/rules/base", label: "抢地盘基础规则", description: "控制同一妖域 3 块地盘，立即获胜。" },
+  duelRules: { href: "/rules/duel", label: "双人局地盘设置", description: "6块快速局、9块标准局与12块完整局。" },
   skills: { href: "/rules/skills", label: "技能汇总", description: "基础版技能的集中阅读入口。" },
   skillRating: { href: "/rules/skill-rating", label: "技能评分标准", description: "说明技能强度和评级的判断方式。" },
   skillHistory: { href: "/rules/skill-history", label: "技能变化历史", description: "记录技能随测试反馈的变化。" },
@@ -71,6 +72,11 @@ export const corePages: Record<string, LinkItem> = {
   presalePlan: { href: "/crowdfunding/presale-plan", label: "预售计划", description: "承接后续小批量预售计划。" },
   playtestFeedback: { href: "/crowdfunding/playtest-feedback", label: "试玩反馈", description: "承接玩家测试反馈展示。" },
   devlog: { href: "/devlog", label: "开发记录", description: "记录规则、美术、印刷和网站进展。" },
+  simulationResults: {
+    href: "/devlog/simulation-results",
+    label: "AI模拟测试结果",
+    description: "查看正式牌组18000局与双人地盘12000局测试。"
+  },
   roadmap: { href: "/devlog/roadmap", label: "开发路线图", description: "查看后续阶段推进顺序。" },
   websiteDevlog: { href: "/devlog/website", label: "网站开发记录", description: "记录官网结构与部署进展。" }
 };
