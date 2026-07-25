@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1110" height="505" viewBox="-16 -16 1142 537" role="img" aria-labelledby="title desc">
+  <title id="title">夕妖 Cover Master V6</title>
+  <desc id="desc">封面展示字标。夕字与星形完全保留；妖字顶部撇较 V5 略加长加厚、左移下移并放缓倾角，右捺适度恢复长度。纯黑透明背景，独立可编辑矢量路径。</desc>
+  <g id="xiyao-cover-master-v6" transform="translate(24 24)" fill="#000" stroke="#000" stroke-linejoin="miter" stroke-linecap="butt" stroke-miterlimit="3.5" paint-order="stroke fill">
+    <g id="xi-group">
+      <path id="xi" stroke-width="15" transform="translate(24.58 0) scale(.873 1)" d="M460 47H215.5L245.4 0H150L84 119 0 263H78L190 87H388L396 95 397 165 310 327 307 330 39 456H213L258 434 350 392 468 179 468 55Z"/>
+      <path id="star" stroke-width="4" transform="translate(22.92 -13) scale(.92 1)" d="M249 146 C252 177 270 209 319 221 C270 233 252 263 249 293 C246 263 226 233 177 221 C226 209 246 177 249 146Z"/>
+    </g>
+
+    <g id="yao-group" transform="translate(-49 0)">
+      <path id="yao-left" stroke-width="12.5" transform="translate(26 0) scale(.96 1)" fill-rule="evenodd" d="M693 6H633V73H587V116H631 L614 190 593 257 656 320 626 350 596 378 565 405 516 443 506 456H584 L611 439 639 418 663 397 694 365 726 396 758 361 721 324 750 280 767 251V73H694V10Z M716 113H688 C686 157 678 208 656 256L656 260 684 286 C699 269 709 253 716 239V114Z"/>
+      <path id="yao-right" stroke-width="15" d="M865 87V172H798V220H863V248 L850 275 827 316 787 374 761 405 735 431 705 455 781 456 L815 426 848 391 870 363 901 316 924 353 951 388 984 423 L1014 449 1098 454 1084 441 1056 418 1030 395 1004 368 L980 339 958 309 938 276 924 245 925 220H990V172H924V87Z"/>
+      <path id="yao-top-sweep" stroke="none" d="M796 87 L974 24 L981 80 L806 111 Z"/>
+    </g>
+  </g>
+</svg>
